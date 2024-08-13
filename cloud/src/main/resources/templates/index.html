@@ -313,15 +313,6 @@
         var todayChDiTimes = 0;
         var monthChDiTimes = 0;
         var ableEnergyDiCap = 0;
-        var accumulatedIncome = 0;
-        var todayIncome = 0;
-        var lastDayIncome = 0;
-        var comprehensiveEfficiency = 0;
-        var runningFactor = 0;
-        var utilizationRate = 0;
-        var lostRate = 0;
-        var utilizationFactor = 0;
-        var equivalentChDiTimes = 0;
 
             $.ajax({
                 url: "/substation/runningStatus",
@@ -340,15 +331,6 @@
                     todayChDiTimes = response.dailyCgCnt;
                     monthChDiTimes = response.monthlyCgCnt;
                     ableEnergyDiCap = response.ableDiscCap;
-                    accumulatedIncome = response.accumulatedRev;
-                    todayIncome = response.todayRev;
-                    lastDayIncome = response.yesterdayRev;
-                    comprehensiveEfficiency = response.overallEfficiency;
-                    runningFactor = response.runningFactor;
-                    utilizationRate = response.utilRateInd;
-                    lossRate = response.storageScrapRate;
-                    utilizationFactor = response.utilFactor;
-                    equivalentChDiTimes = response.equivalentChargeDischargeTime;
                 }
             })
                 .always(function () {
@@ -376,21 +358,16 @@
                     $("#monthChDiTimes").html('<span class="sub-running-status-num">' + monthChDiTimes + '</span>');
                     // 可放电量
                     $("#ableEnergyDiCap").html('<span class="sub-running-status-num">' + ableEnergyDiCap + '</span> <span>MWh</span>');
-                    $('#accumulated-income').html('<span style="font-weight: bold;">'+ accumulatedIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#today-income').html('<span style="font-weight: bold;">'+ todayIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#lastDay-income').html('<span style="font-weight: bold;">'+ lastDayIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#comprehensiveEfficiency').text(comprehensiveEfficiency + '%');
-                    $('#runningFactor').text(runningFactor);
-                    $('#utilizationRate').text(utilizationRate + '%');
-                    $('#lossRate').text(lostRate + '%');
-                    $('#utilizationFactor').text(utilizationFactor);
-                    $('#equivalentChDiTimes').text(equivalentChDiTimes);
                 })
 
 
 
-
-
+        var accumulatedIncome = 1234.56;
+        var todayIncome = 77.88;
+        var lastDayIncome = 66.77;
+        $('#accumulated-income').html('<span style="font-weight: bold;">'+ accumulatedIncome +'</span><span style="font-size: 16px !important;">万元</span>')
+        $('#today-income').html('<span style="font-weight: bold;">'+ todayIncome +'</span><span style="font-size: 16px !important;">万元</span>')
+        $('#lastDay-income').html('<span style="font-weight: bold;">'+ lastDayIncome +'</span><span style="font-size: 16px !important;">万元</span>')
 
         var dayAverage = 1111.11;
         $("#day-average").text(dayAverage);
@@ -645,8 +622,18 @@
         airConditionerChart.setOption(airConditionerOption);
         fireControlChart.setOption(fireControlOption)
 
-
-
+        var comprehensiveEfficiency = 99.99;
+        var runningFactor = 99.99;
+        var utilizationRate = 99.99;
+        var lostRate = 0.01;
+        var utilizationFactor = 99.99;
+        var equivalentChDiTimes = 9;
+        $('#comprehensiveEfficiency').text(comprehensiveEfficiency + '%');
+        $('#runningFactor').text(runningFactor);
+        $('#utilizationRate').text(utilizationRate + '%');
+        $('#lossRate').text(lostRate + '%');
+        $('#utilizationFactor').text(utilizationFactor);
+        $('#equivalentChDiTimes').text(equivalentChDiTimes);
 
         $('#equipment-status .layui-col-md3:first-child .equipment-counts').html("设备总数: &nbsp; "+bmsCount);
         $('#equipment-status .layui-col-md3:first-child .alarm-counts').html("告警数量: &nbsp;"+bmsAlarmCount);

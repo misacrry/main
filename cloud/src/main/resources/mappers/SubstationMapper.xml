@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cloud.mapper.SubstationMapper">
+    <select id="runningStatus" resultType="com.example.cloud.model.Substation">
+        select
+        id,
+        TotW as totW,
+        TotVar as totVar,
+        CharCapDay as charCapDay,
+        DiscCapDay as discCapDay,
+        AccumulatedChargeCap as accumulatedChargeCap,
+        AccumulatedDischargeCap as accumulatedDischargeCap,
+        AccumulatedChargeTime as accumulatedChargeTime,
+        AccumulatedDischargeTime as accumulatedDischargeTime,
+        DailyCgCnt as dailyCgCnt,
+        MonthlyCgCnt as monthlyCgCnt,
+        StationStatus as stationStatus,
+        SOC as soc,
+        AccumulatedRunningTime as accumulatedRunningTime,
+        AbleCharCap as ableCharCap,
+        AbleDiscCap as ableDiscCap,
+        AbleEnergy as ableEnergy,
+        AbleDsEnergy as ableDsEnergy,
+        OverallEfficiency as overallEfficiency,
+        RunningFactor as runningFactor,
+        UtilRateInd as utilRateInd,
+        StorageScrapRate as storageScrapRate,
+        UtilFactor as utilFactor,
+        AccumulatedRev as accumulatedRev,
+        TodayRev as todayRev,
+        YesterdayRev as yesterdayRev,
+        MonthlyRev as monthlyRev,
+        YearlyRev as yearlyRev,
+        equivalentChargeDischargeTime as equivalentChargeDischargeTime,
+        latitude,
+        longitude,
+        operationTime,
+        description
+        from substation
+    </select>
+</mapper>

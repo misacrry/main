@@ -10,6 +10,7 @@ public class DefaultView implements WebMvcConfigurer  {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry){
+        // 默认访问index.html
         registry.addViewController("/").setViewName("forward:index.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
