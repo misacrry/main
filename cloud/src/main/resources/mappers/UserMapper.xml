@@ -3,6 +3,26 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cloud.mapper.UserMapper">
+
+    <select id="selectOneByPhone" parameterType="java.lang.String" resultType="com.example.cloud.model.User">
+        select id,
+        addr,
+        age,
+        name,
+        password,
+        phone,
+        wx_openid wxOpenId,
+        wx_nickname wxNickName,
+        role_id roleId
+        from user
+        where phone = #{phone}
+    </select>
+
+    <insert id="addOne" parameterType="com.example.cloud.model.User">
+        insert into user (addr, age, name, password, phone, wx_openid, wx_nickname, role_id)
+        values (#{addr}, #{age}, #{name}, #{password}, #{phone}, #{wxOpenId}, #{wxNickName}, #{roleId})
+    </insert>
+
     <select id="checkUser" resultType="java.lang.Integer">
         select id
         from user

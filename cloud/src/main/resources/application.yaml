@@ -10,7 +10,19 @@ spring:
     username: root
     password: 123456
 
-# 热部署
+# security配置
+  security:
+    user:
+      name: rsdw
+      password: rsdw
+
+# redis配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+
+  # 热部署
   devtools:
     livereload:
       enabled: true
@@ -21,3 +33,15 @@ spring:
 # mybatis配置
 mybatis:
   mapper-locations: classpath:mappers/*.xml
+
+# jwt配置
+jwt:
+  token:
+    # 令牌自定义标识
+    header: "token"
+    # 令牌秘钥
+    secret: "ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI="
+    # 令牌有效期（默认30分钟）
+    expireTime: 1800
+
+

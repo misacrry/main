@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<link href="layui/css/layui.css" rel="stylesheet">
+<script src="js/jquery.min.js"></script>
+<script src="js/axios.min.js"></script>
+<body>
+
+<div class="main-body">
+    <div style="display: block">
+        <div class="layui-input-wrap">
+            <div style="display: inline-block" class="layui-input-prefix">
+                <i class="layui-icon layui-icon-username"></i>
+            </div>
+            <input style="display: inline-block" id="usr">
+        </div>
+    </div>
+    <div style="display:block;">
+        <div class="layui-input-wrap">
+            <div style="display: inline-block" class="layui-input-prefix layui-input-split">
+                <i class="layui-icon layui-icon-password"></i>
+            </div>
+            <input style="display: inline-block" id="psd">
+        </div>
+    </div>
+
+    <button onclick="login()">登录</button>
+</div>
+
+</body>
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    var token = localStorage.getItem('token');
+
+    function login() {
+        var username = $("#usr").val();
+        var password = $("#psd").val();
+
+        $.ajax({
+            url: "/sys/login",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                phone: username,
+                password: password
+            }),
+            success: function (response) {
+                const token = getCookie("token");
+                localStorage.setItem('Authorization', token);
+                location.href = "index.html";
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        });
+
+    }
+
+</script>
+<style>
+    .main-body {
+        width: 40%;
+        aspect-ratio: 1.5;
+        margin: auto;
+    }
+</style>
+</html>

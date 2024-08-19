@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link href="layui/css/layui.css" rel="stylesheet">
     <script src="js/jquery.min.js"></script>
+    <script src="js/axios.min.js"></script>
     <script src="layui/layui.js"></script>
 </head>
 <body>
@@ -19,6 +20,7 @@
             <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">收益</a></li>
             <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">一次图</a></li>
             <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">定值设置</a></li>
+            <li class="layui-btn layui-btn-primary  layui-btn-danger"  style="float: right" id="logout"><a href="">登出</a></li>
         </ul>
     </div>
     <div class="layui-col-md1" style="text-align: center; color: #666666">
@@ -293,6 +295,7 @@
         echarts = layui.echarts;
         var $ = layui.$;
 
+
         var stamp= new Date().getTime() + 8 * 60 * 60 * 1000;
         var currentDay = new Date(stamp).toISOString().replace(/T/, ' ').substring(0, 10);
         var currentTime = new Date(stamp).toISOString().replace(/\..+/, '').substring(11, 19);
@@ -323,35 +326,38 @@
         var utilizationFactor = 0;
         var equivalentChDiTimes = 0;
 
-            $.ajax({
-                url: "/substation/runningStatus",
-                type: "GET",
-                success: function (response) {
-                    console.log(response)
-                    runningDays = response.accumulatedRunningTime;
-                    todayChCap = response.charCapDay;
-                    todayDiCap = response.discCapDay;
-                    subStatus = response.stationStatus;
-                    accumulatedChCap = response.accumulatedChargeTime;
-                    accumulatedDiCap = response.accumulatedDischargeTime;
-                    soc = response.soc;
-                    realTimeActivePower = response.totW;
-                    ableEnergyChCap = response.ableCharCap;
-                    todayChDiTimes = response.dailyCgCnt;
-                    monthChDiTimes = response.monthlyCgCnt;
-                    ableEnergyDiCap = response.ableDiscCap;
-                    accumulatedIncome = response.accumulatedRev;
-                    todayIncome = response.todayRev;
-                    lastDayIncome = response.yesterdayRev;
-                    comprehensiveEfficiency = response.overallEfficiency;
-                    runningFactor = response.runningFactor;
-                    utilizationRate = response.utilRateInd;
-                    lossRate = response.storageScrapRate;
-                    utilizationFactor = response.utilFactor;
-                    equivalentChDiTimes = response.equivalentChargeDischargeTime;
-                }
-            })
-                .always(function () {
+        const token = localStorage.getItem('Authorization');
+        axios.get('/substation/runningStatus', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(function (response) {
+                console.log(response);
+
+                runningDays = response.data.accumulatedRunningTime;
+                todayChCap = response.data.charCapDay;
+                todayDiCap = response.data.discCapDay;
+                subStatus = response.data.stationStatus;
+                accumulatedChCap = response.data.accumulatedChargeTime;
+                accumulatedDiCap = response.data.accumulatedDischargeTime;
+                soc = response.data.soc;
+                realTimeActivePower = response.data.totW;
+                ableEnergyChCap = response.data.ableCharCap;
+                todayChDiTimes = response.data.dailyCgCnt;
+                monthChDiTimes = response.data.monthlyCgCnt;
+                ableEnergyDiCap = response.data.ableDiscCap;
+                accumulatedIncome = response.data.accumulatedRev;
+                todayIncome = response.data.todayRev;
+                lastDayIncome = response.data.yesterdayRev;
+                comprehensiveEfficiency = response.data.overallEfficiency;
+                runningFactor = response.data.runningFactor;
+                utilizationRate = response.data.utilRateInd;
+                lossRate = response.data.storageScrapRate;
+                utilizationFactor = response.data.utilFactor;
+                equivalentChDiTimes = response.data.equivalentChargeDischargeTime;
+            } )
+                .finally(function () {
                     $('#running-days').html("累计运行   "+'<span style="color: #a233c6; margin-left: 20px;">' + runningDays + '</span> <span>天</span>')
                     // 今日充电量
                     $("#todayChCap").html('<span class="sub-running-status-num">' + todayChCap + '</span> <span>MWh</span>');
@@ -387,7 +393,20 @@
                     $('#equivalentChDiTimes').text(equivalentChDiTimes);
                 })
 
+        $("#logout").on('click', function (response) {
+                axios.get('/sys/logout', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        window.location.href = "/login.html";
+                    })
+                    .catch(error => {
+                        console.error('Logout error:', error);
+                    });
 
+        })
 
 
 
@@ -708,6 +727,10 @@
         element.classList.remove('layui-btn-primary');
         element.classList.add('is-choose');
     }
+
+
+
+
 
 </script>
 </body>
