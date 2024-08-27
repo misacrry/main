@@ -1,0 +1,193 @@
+{
+	"code": 0,
+	"count": 1000,
+	"data": [
+		{
+			"id": 1,
+			"name": "User-1",
+			"type": 4,
+			"status": 2,
+			"score": 28,
+			"experience": 54981,
+			"sex": "男",
+			"city": "丽江市",
+			"description": "-",
+			"createTime": "2014-06-04 12:29:55",
+			"parentId": null,
+			"children": [
+				{
+					"id": 2,
+					"name": "User-2",
+					"type": 2,
+					"status": 3,
+					"score": 75,
+					"experience": 43884,
+					"sex": "女",
+					"city": "大理白族自治州",
+					"description": "-",
+					"createTime": "1971-11-03 19:15:43",
+					"parentId": null,
+					"children": [
+						{
+							"id": 3,
+							"name": "User-3",
+							"type": 2,
+							"status": 3,
+							"score": 72,
+							"experience": 75912,
+							"sex": "女",
+							"city": "渭南市",
+							"description": "-",
+							"createTime": "2022-01-17 01:48:02",
+							"parentId": null,
+							"children": [
+								{
+									"id": 4,
+									"name": "User-4",
+									"type": 3,
+									"status": 3,
+									"score": 21,
+									"experience": 23198,
+									"sex": "男",
+									"city": "海外",
+									"description": "-",
+									"createTime": "1986-11-06 23:56:45",
+									"parentId": null,
+									"children": [],
+									"isParent": false
+								},
+								{
+									"id": 6,
+									"name": "User-6",
+									"type": 2,
+									"status": 4,
+									"score": 70,
+									"experience": 51144,
+									"sex": "男",
+									"city": "益阳市",
+									"description": "-",
+									"createTime": "2017-02-21 00:26:02",
+									"parentId": null,
+									"children": [],
+									"isParent": false
+								}
+							],
+							"isParent": true
+						},
+						{
+							"id": 7,
+							"name": "User-7",
+							"type": 5,
+							"status": 3,
+							"score": 24,
+							"experience": 64919,
+							"sex": "男",
+							"city": "贵港市",
+							"description": "-",
+							"createTime": "1981-05-14 17:52:03",
+							"parentId": null,
+							"children": [
+								{
+									"id": 8,
+									"name": "User-8",
+									"type": 6,
+									"status": 2,
+									"score": 2,
+									"experience": 80656,
+									"sex": "男",
+									"city": "宿迁市",
+									"description": "-",
+									"createTime": "1984-05-24 20:44:26",
+									"parentId": null,
+									"children": [],
+									"isParent": false
+								}
+							],
+							"isParent": true
+						}
+					],
+					"isParent": true
+				}
+			],
+			"isParent": true
+		},
+		{
+			"id": 9,
+			"name": "User-9",
+			"type": 6,
+			"status": 2,
+			"score": 58,
+			"experience": 2414,
+			"sex": "女",
+			"city": "宿州市",
+			"description": "-",
+			"createTime": "2015-05-06 00:39:19",
+			"parentId": null,
+			"children": [],
+			"isParent": false
+		},
+		{
+			"id": 325,
+			"name": "User-325",
+			"type": 3,
+			"status": 3,
+			"score": 62,
+			"experience": 94793,
+			"sex": "女",
+			"city": "嘉峪关市",
+			"description": "-",
+			"createTime": "1990-02-26 16:03:01",
+			"parentId": null,
+			"children": [
+				{
+					"id": 326,
+					"name": "User-326",
+					"type": 4,
+					"status": 4,
+					"score": 70,
+					"experience": 19861,
+					"sex": "男",
+					"city": "佳木斯市",
+					"description": "-",
+					"createTime": "1971-09-13 13:37:06",
+					"parentId": null,
+					"children": [
+						{
+							"id": 327,
+							"name": "User-327",
+							"type": 1,
+							"status": 2,
+							"score": 10,
+							"experience": 1866,
+							"sex": "女",
+							"city": "重庆市",
+							"description": "-",
+							"createTime": "1991-08-01 14:53:52",
+							"parentId": null,
+							"children": [
+								{
+									"id": 328,
+									"name": "User-328",
+									"type": 6,
+									"status": 3,
+									"score": 97,
+									"experience": 81309,
+									"sex": "女",
+									"city": "重庆市",
+									"description": "-",
+									"createTime": "1973-06-11 16:06:26",
+									"parentId": null,
+									"children": [],
+									"isParent": false
+								}
+							],
+							"isParent": true
+						}
+					],
+					"isParent": true
+				}
+			],
+			"isParent": true
+		}
+	]
+}

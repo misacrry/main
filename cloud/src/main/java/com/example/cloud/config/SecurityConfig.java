@@ -15,11 +15,15 @@ import javax.annotation.Resource;
 
 @Configuration  // 注册为Springboot的配置类
 @Slf4j
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 
     // 注入Jwt认证拦截器
     @Resource
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
+    @Resource
+    private JwtInterceptor jwtInterceptor;
+
 
 
     /**
@@ -44,6 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -65,8 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/sys/register").anonymous()
                 // 其他所以接口请求都需要经过认证
                 .anyRequest().authenticated()
-
-
                 .and()
                 // 配置登录页面和处理
 //                .formLogin()

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="layui/css/layui.css" rel="stylesheet">
+<link href="css/header.css" rel="stylesheet">
+<body>
+<div id="header"></div>
+<div id="backTree"></div>
+<table id="menu" ></table>
+<script src="js/jquery.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/header.js"></script>
+<script type="text/html" id="backTree-toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addSub">新增储能站</button>
+    </div>
+</script>
+<script type="text/html" id="treeTable-tools">
+    <div class="layui-btn-container">
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="addChild">新增子级</a>
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="delete">删除</a>
+    </div>
+</script>
+<script>
+
+
+    layui.use(['treeTable'],function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var treeTable = layui.treeTable;
+
+        const token = localStorage.getItem('Authorization');
+        var treeData = [];
+        var nodeData = null;
+
+        generateHeader();
+
+        const addUrl = ['/substation/addSub', '/gcPoint/addOne', '/pcs/addOne', '/bms/addOne'];
+
+        function test () {
+
+        }
+
+        var inst = treeTable.render({
+            elem: '#menu',
+            url: '/getBackTree',
+            id: 'backTree',
+            headers: {'Authorization': `Bearer ${token}`},
+            treeColIndex: 0,	//树形图标显示在第几列
+            treeSpid: '0',		//最上级的父级id
+            treeIdName: 'id',
+            treePidName: 'parentId',
+            // treeDefaultClose: false,	//是否默认折叠
+            // treeLinkage: true,		//父级展开时是否自动展开所有子级
+            toolbar: '#backTree-toolbar',
+            cols: [[
+                {type:'radio'},
+                {field: 'id', title: 'ID', width: 80, sort: true},
+                {field: 'name', title: '名称', width: 200, sort: true},
+                {field: 'type', title: '类型', width: 100, sort: true},
+                {title: '操作', width: 190, align: 'center', toolbar: '#treeTable-tools'},
+            ]],
+
+            // page: true
+        })
+
+        treeTable.expandAll('backTree', true);
+
+        treeTable.on("toolbar(backTree)", function (obj) {
+            add(null, '根节点');
+        })
+
+        treeTable.on('tool('+inst.config.id+')', function (obj) {
+            var layEvent = obj.event;
+            var trElem = obj.tr;
+            var trData = obj.data;
+            var tableId = obj.config.id;
+            if (layEvent === 'addChild'){
+                add(trData.pid, trData.type);
+            } else if (layEvent === 'delete') {
+                del(trData.pid, trData.type);
+
+            }
+        })
+
+        function add(id, type) {
+            if (type  === '并网点') {
+                layer.open({
+                    type: 1, // 使用layer的页面层
+                    title: '添加节点',
+                    area: ['400px', '300px'], // 弹窗的宽度和高度
+                    content: `
+                <div style="padding: 20px;">
+                    <form id="addNodeForm">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">节点类型：‌</label>
+                            <div class="layui-input-block">
+                                <select name="nodeType" lay-verify="required" id="selectAddType">
+                                    <option value="">请选择类型</option>
+                                    <option value="2">pcs</option>
+                                    <option value="3">bms</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="addNode">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            `,
+                    btn: [], // 不显示默认的按钮
+                    success: function (layero, index) {
+                        // 表单提交事件
+                        layui.form.on('submit(addNode)', function (data) {
+                            var typeSel = $('#selectAddType[name=nodeType]').val(); // 获取输入框的值
+                            console.log(typeSel)
+                            if (typeSel === '2' || typeSel === '3') {
+                                console.log("post")
+                                axios.post(addUrl[typeSel], null, {
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`
+                                    },
+                                    params: {
+                                        pointId: id
+                                    }
+                                })
+                                    .then(function () {
+                                        layer.close(1, function () {
+                                            treeTable.reload('backTree', {data: treeTable});
+                                            treeTable.expandAll('backTree', true);
+                                        })
+                                    })
+                            }
+                            return false; // 阻止表单跳转
+                        });
+                    }
+                });
+            } else if (type === '储能站') {
+                console.log("新增并网点")
+                axios.post(addUrl[1], null, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    params: {
+                        subId: id
+                    }
+                }).then(function () {
+                    treeTable.reload('backTree')
+                })
+            } else if (type === '根节点'){
+                console.log("新增储能站")
+                axios.post(addUrl[0], null, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(function () {
+                    treeTable.reload('backTree')
+                })
+            }
+            // treeTable.reload('backTree')
+        }
+
+
+        function del(id, type) {
+            console.log("delete");
+            var url = null;
+            if (type === "储能站") {
+                url = '/substation/deleteById';
+            } else if (type === "并网点") {
+                url = '/gcPoint/deleteById';
+            } else if (type === 'pcs') {
+                url = '/pcs/deleteById';
+            } else if (type === 'bms') {
+                url = '/bms/deleteById';
+            } else {
+            }
+
+            layer.confirm('确定删除?', {
+                btn: ['确定', '取消']
+            }, function (i) {
+                axios.delete(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    params: {
+                        id: id,
+                    }
+                })
+                    .then(function (response) {
+                        console.log("删除")
+                    })
+                layer.close(i);
+                treeTable.reload('backTree');
+                treeTable.expandAll('backTree', true);
+            }, function () {
+                treeTable.expandAll('backTree', true);
+            })
+
+        }
+
+
+    })
+
+
+
+</script>
+</body>
+<style>
+    body {
+        background-color: #f2f8ff;
+    }
+
+    .page-button {
+        background-color: #e2e2e2;
+        margin: 0 10px;
+    }
+
+    /*.layui-table-body .layui-table, .layui-table-header .layui-table {*/
+    /*    margin-left: 100px;*/
+    /*}*/
+
+</style>
+</html>

@@ -1,6 +1,9 @@
 package com.example.cloud.config;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.cloud.security.SecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +28,9 @@ public class JwtTokenUtil {
     private static final String CLAIM_KEY_USERNAME = "username";
     private static final String CLAIM_KEY_CREATED = "created";
     private static final String CLAIM_KEY_USER_ID = "userId";
+    private static final String ACCESS_TOKEN = "accessToken";
+    private static final String REFRESH_TOKEN = "refreshToken";
+    public static final Long JWT_TTL = 60 * 60 * 24 * 1000L;
 
     // 令牌自定义标识
     @Value("${jwt.token.header}")
@@ -37,6 +43,65 @@ public class JwtTokenUtil {
     // 令牌有效期（默认30分钟），也可将token的过期时间交给redis管理
     @Value("${jwt.token.expireTime}")
     private Long expiration;
+
+    /**
+     * 生成accessToken
+     */
+    public String createAccessToken(String loginId, Integer userId, Date nowTime) {
+        Date expiresAt = new Date(nowTime.getTime() + 1000 * 60 );
+        String token = null;
+        try {
+            token = JWT
+                    .create()
+                    .withSubject(String.valueOf(userId))
+                    .withIssuedAt(nowTime)
+                    .withExpiresAt(expiresAt)
+                    .withClaim("loginId", loginId)
+                    .sign(Algorithm.HMAC256(secret));
+        } catch (Exception e) {
+            throw new RuntimeException("accessToken生成异常");
+        }
+        return token;
+    }
+
+    /**
+     * 生成refreshToken
+     */
+    public String createRefreshToken (String loginId, Date loginTime, Integer userId, Date nowTime) {
+        Date expiresAt = new Date(nowTime.getTime() + JWT_TTL );
+        String token = null;
+        try {
+            token = JWT
+                    .create()
+                    .withSubject(String.valueOf(userId))
+                    .withIssuedAt(nowTime)
+                    .withExpiresAt(expiresAt)
+                    .withClaim("loginId", loginId)
+                    .withClaim("loginTime", loginTime)
+                    .sign(Algorithm.HMAC256(secret));
+        } catch (Exception e) {
+            throw new RuntimeException("生成refreshToken异常");
+        }
+        return token;
+    }
+
+    /**
+     * 解析token内容
+     */
+    public DecodedJWT parseFromToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            DecodedJWT decodedJWT = JWT.decode(token);
+
+            // 验证JWT的签名
+            algorithm.verify(decodedJWT);
+            return decodedJWT;
+        } catch (Exception e) {
+            throw new RuntimeException("token解析异常");
+        }
+    }
+
+
 
     /**
      * 根据负责生成JWT的token
@@ -121,6 +186,7 @@ public class JwtTokenUtil {
     public boolean isTokenExpired(String token) {
         Date expiredDate = getExpiredDateFromToken(token);
         // expiredDate < new Date() 返回true, 反之false
+        System.out.println("是否过期：  "+expiredDate.before(new Date()));
         return expiredDate.before(new Date());
     }
 
@@ -128,8 +194,10 @@ public class JwtTokenUtil {
      * 从token中获取过期时间
      */
     private Date getExpiredDateFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims.getExpiration();
+//        Claims claims = getClaimsFromToken(token);
+//        return claims.getExpiration();
+        DecodedJWT decodedJWT = parseFromToken(token);
+        return decodedJWT.getExpiresAt();
     }
 
     /**
@@ -165,6 +233,10 @@ public class JwtTokenUtil {
     public String getToken(HttpServletRequest request) {
         return request.getHeader(header);
     }
+
+//    public String refreshToken (long userId) {
+//
+//    }
 
 
 }

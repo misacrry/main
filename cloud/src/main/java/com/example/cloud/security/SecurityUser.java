@@ -21,6 +21,8 @@ public class SecurityUser implements UserDetails {
 
     private List<String> permissions;
 
+    private String refreshToken;
+
     @JSONField(serialize = false)  // 防止存入redis时序列化出错，不进行序列化，也不存入redis中
     private List<SimpleGrantedAuthority> authorities;
 

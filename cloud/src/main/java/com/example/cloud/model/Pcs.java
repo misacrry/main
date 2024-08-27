@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Pcs {
 
-  private long id;
+  private Integer id;
+  private Integer pointId;
+  private Integer equipmentId;
   private double totW;
   private double totVar;
   private double ppvPhsAb;
@@ -35,5 +37,6 @@ public class Pcs {
   private String charStatus;
   private double accumulatedChargeCap;
   private double accumulatedDischargeCap;
+  private int totFault;
 
 }

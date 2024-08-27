@@ -1,9 +1,9 @@
 package com.example.cloud.security;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.cloud.common.BusinessException;
 import com.example.cloud.config.JwtTokenUtil;
 import com.example.cloud.config.RedisUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +58,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
+
         // 判断token是否带有文本
         if (!StringUtils.hasText(token)) {
             // token为空的话，就不管它，让SpringSecurity中的其他过滤器处理请求，请求放行
@@ -67,10 +68,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // token不为空时，解析token
         String userId = null;
         try {
-            Claims claims = jwtTokenUtil.getClaimsFromToken(token);
+            DecodedJWT decodedJWT = jwtTokenUtil.parseFromToken(token);
             // 解析出userId
-            if (!Objects.isNull(claims)) {
-                Object userIdObject = claims.get("userId");
+            if (!Objects.isNull(decodedJWT)) {
+                Object userIdObject = decodedJWT.getSubject();
                 userId = userIdObject.toString();
             }
         } catch (Exception e) {
@@ -91,4 +92,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 放行
         filterChain.doFilter(request, response);
     }
+
+
 }

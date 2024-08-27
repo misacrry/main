@@ -8,6 +8,8 @@ public interface UserService {
 
     boolean addOne(User user);
 
+
+
     Integer checkUser(String phone, String password);
 
 

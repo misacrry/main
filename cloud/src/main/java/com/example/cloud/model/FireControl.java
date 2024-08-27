@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FireControl {
 
-  private long fireControlAlarm;
-  private long gasAlarm;
-
+  private int id;
+  private int fireControlAlarm;
+  private int gasAlarm;
+  private int fireControlTotFault;
 
 }

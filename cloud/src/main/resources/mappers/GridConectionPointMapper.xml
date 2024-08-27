@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cloud.mapper.GridConnectionPointMapper">
+
+    <select id="selectList" resultType="com.example.cloud.model.GridConnectionPoint">
+        select
+        id,
+        subId,
+        phaseABLineV,
+        phaseBCLineV,
+        phaseCALineV,
+        phaseAV,
+        phaseBV,
+        phaseCV,
+        phaseAI,
+        phaseBI,
+        phaseCI,
+        activeP,
+        reactiveP,
+        powerFactor,
+        switchStatus,
+        totalChargeElectricity,
+        totalDischargeElectricity,
+        totalChargePrice,
+        totalDischargePrice
+        from grid_connection_point
+    </select>
+
+    <select id="selectListBySubId" resultType="com.example.cloud.model.GridConnectionPoint">
+        select
+        id,
+        subId,
+        phaseABLineV,
+        phaseBCLineV,
+        phaseCALineV,
+        phaseAV,
+        phaseBV,
+        phaseCV,
+        phaseAI,
+        phaseBI,
+        phaseCI,
+        activeP,
+        reactiveP,
+        powerFactor,
+        switchStatus,
+        totalChargeElectricity,
+        totalDischargeElectricity,
+        totalChargePrice,
+        totalDischargePrice
+        from grid_connection_point
+        where subId = #{subId}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete
+        from grid_connection_point
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteBySubId" parameterType="java.lang.Integer">
+        delete
+        from grid_connection_point
+        where subId = #{subId}
+    </delete>
+
+    <insert id="addOne" parameterType="com.example.cloud.model.GridConnectionPoint">
+        insert into grid_connection_point (
+        subId,
+        phaseABLineV,
+        phaseBCLineV,
+        phaseCALineV,
+        phaseAV,
+        phaseBV,
+        phaseCV,
+        phaseAI,
+        phaseBI,
+        phaseCI,
+        activeP,
+        reactiveP,
+        powerFactor,
+        switchStatus,
+        totalChargeElectricity,
+        totalDischargeElectricity,
+        totalChargePrice,
+        totalDischargePrice )
+        values (
+        #{subId},
+        #{phaseABLineV},
+        #{phaseBCLineV},
+        #{phaseCALineV},
+        #{phaseAV},
+        #{phaseBV},
+        #{phaseCV},
+        #{phaseAI},
+        #{phaseBI},
+        #{phaseCI},
+        #{activeP},
+        #{reactiveP},
+        #{powerFactor},
+        #{switchStatus},
+        #{totalChargeElectricity},
+        #{totalDischargeElectricity},
+        #{totalChargePrice},
+        #{totalDischargePrice} )
+
+    </insert>
+
+
+
+</mapper>

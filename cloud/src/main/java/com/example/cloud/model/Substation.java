@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 @NoArgsConstructor
 public class Substation {
 
-  private long id;
+  private Integer id;
   private double totW;
   private double totVar;
   private double charCapDay;

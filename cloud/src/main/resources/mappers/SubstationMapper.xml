@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cloud.mapper.SubstationMapper">
-    <select id="runningStatus" resultType="com.example.cloud.model.Substation">
+    <select id="selectSubList" resultType="com.example.cloud.model.Substation">
         select
         id,
         TotW as totW,
@@ -40,4 +40,57 @@
         description
         from substation
     </select>
+
+    <insert id="addSub" parameterType="com.example.cloud.model.Substation">
+        INSERT INTO substation (
+        id,
+        TotW,
+        TotVar,
+        CharCapDay,
+        DiscCapDay,
+        AccumulatedChargeCap,
+        AccumulatedDischargeCap,
+        AccumulatedChargeTime,
+        AccumulatedDischargeTime,
+        DailyCgCnt,
+        MonthlyCgCnt,
+        StationStatus,
+        SOC,
+        AccumulatedRunningTime,
+        AbleCharCap,
+        AbleDiscCap,
+        AbleEnergy,
+        AbleDsEnergy,
+        OverallEfficiency,
+        RunningFactor,
+        UtilRateInd,
+        StorageScrapRate,
+        UtilFactor,
+        AccumulatedRev,
+        TodayRev,
+        YesterdayRev,
+        MonthlyRev,
+        YearlyRev,
+        equivalentChargeDischargeTime,
+        latitude,
+        longitude,
+
+        description
+        )
+        VALUES (
+        #{id}, #{totW}, #{totVar}, #{charCapDay}, #{discCapDay},
+        #{accumulatedChargeCap}, #{accumulatedDischargeCap}, #{accumulatedChargeTime}, #{accumulatedDischargeTime}, #{dailyCgCnt},
+        #{monthlyCgCnt}, #{stationStatus}, #{soc}, #{accumulatedRunningTime}, #{ableCharCap},
+        #{ableDiscCap}, #{ableEnergy}, #{ableDsEnergy}, #{overallEfficiency}, #{runningFactor},
+        #{utilRateInd}, #{storageScrapRate}, #{utilFactor}, #{accumulatedRev}, #{todayRev},
+        #{yesterdayRev}, #{monthlyRev}, #{yearlyRev}, #{equivalentChargeDischargeTime},
+        #{latitude}, #{longitude},  #{description}
+        )
+    </insert>
+
+    <delete id="delSubById" parameterType="java.lang.Integer">
+        delete
+        from substation
+        where id = #{id}
+    </delete>
 </mapper>

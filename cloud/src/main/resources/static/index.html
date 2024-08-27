@@ -8,19 +8,33 @@
     <script src="layui/layui.js"></script>
 </head>
 <body>
-<div class="layui-row" style="background-color: #F2F2F2; display: flex; align-items: center; height: 60px">
+<div class="layui-row" style="background-color: #ffffff; display: flex; align-items: center; height: 60px">
     <div class="layui-col-md1" id="title">
         储能演示
     </div>
     <div class="layui-col-md10" style="padding-left: 100px;">
         <ul>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">首页</a></li>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">PCS</a></li>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">BMS</a></li>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">收益</a></li>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">一次图</a></li>
-            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2" onclick="changeBg(this)"><a href="">定值设置</a></li>
-            <li class="layui-btn layui-btn-primary  layui-btn-danger"  style="float: right" id="logout"><a href="">登出</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="/index.html">首页</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="/pcs.html">PCS</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="/bms.html">BMS</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="">收益</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="">一次图</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="">定值设置</a></li>
+            <li class="layui-btn layui-btn-primary layui-btn-radius page-button" style="background-color: #e2e2e2"
+                ><a href="backManage.html">后台管理</a></li>
+            <li class="layui-btn layui-btn-primary  layui-btn-danger" style="float: right" id="logout"><a
+                    href="">登出</a></li>
+            <li class="layui-btn layui-btn-primary" style="float: right" id="change-sub">
+                <span>切换储能站</span>
+                <i class="layui-icon layui-icon-down layui-font-12"></i>
+            </li>
+
         </ul>
     </div>
     <div class="layui-col-md1" style="text-align: center; color: #666666">
@@ -67,7 +81,7 @@
 
                 </div>
             </div>
-            <div class="layui-row" >
+            <div class="layui-row">
                 <div class="layui-col-md4">
                     <div style="display: inline-block">
                         <img src="icon/电池充电_battery-charge%20(1).png" width="40px" height="40px">
@@ -163,19 +177,19 @@
         </div>
         <div id="income">
             <div class="part-title">经济收益</div>
-            <div class="income-type" style="background-color: skyblue; ">
+            <div class="income-type" style="background-color: #7a8aff; ">
                 <div style="text-align: left">累计收益</div>
                 <div id="accumulated-income">11</div>
             </div>
-            <div class="income-type" style="background-color: skyblue;">
+            <div class="income-type" style="background-color: #678bcc;">
                 <div style="text-align: left">今日收益</div>
                 <div id="today-income">11</div>
             </div>
-            <div class="income-type" id="last-type" style="background-color: skyblue;">
+            <div class="income-type" id="last-type" style="background-color: #678bcc;">
                 <div style="text-align: left">昨日收益</div>
-                <div id="lastDay-income" >11</div>
+                <div id="lastDay-income">11</div>
             </div>
-            <div class="layui-row" style="display: flex; background-color: #e2e2e2; margin-top: 10px;">
+            <div class="layui-row" style="display: flex; background-color: #f6f8fb; margin-top: 10px;">
                 <div class="income-detail">
                     <div>日均（元）</div>
                     <div id="day-average"></div>
@@ -285,18 +299,18 @@
     </div>
 
 </div>
-
 <script>
     layui.config({
         version: 2,
         base: 'echarts/'
-    }).use(['form', 'echarts'], function () {
+    }).use(['form', 'echarts', 'dropdown'], function () {
         var form = layui.form;
+        var dropdown = layui.dropdown;
         echarts = layui.echarts;
         var $ = layui.$;
 
 
-        var stamp= new Date().getTime() + 8 * 60 * 60 * 1000;
+        var stamp = new Date().getTime() + 8 * 60 * 60 * 1000;
         var currentDay = new Date(stamp).toISOString().replace(/T/, ' ').substring(0, 10);
         var currentTime = new Date(stamp).toISOString().replace(/\..+/, '').substring(11, 19);
 
@@ -325,6 +339,10 @@
         var lostRate = 0;
         var utilizationFactor = 0;
         var equivalentChDiTimes = 0;
+        // 存放储能站数据
+        var subData = [];
+        var subCounts = 0;
+        var dropdownArr = [];
 
         const token = localStorage.getItem('Authorization');
         axios.get('/substation/runningStatus', {
@@ -333,82 +351,139 @@
             }
         })
             .then(function (response) {
-                console.log(response);
+                if (response.data.code === 500 ) {
+                    console.log("跳转")
+                    window.location.href = "login.html";
+                }
+                console.log(response.data)
+                console.log(response.data.message);
+                console.log(response.code)
+                console.log(response.data.data)
+                subData = response.data;
+                subCounts = subData.length;
+                if (subCounts >= 1) {
+                    for (var i = 1; i <= subCounts; i++) {
+                        dropdownArr.push({title: "储能站" + i, id: i - 1});
+                    }
+                }
+                if (subCounts === 1) {
+                    console.log("隐藏")
+                    $('#change-sub').hide();
+                } else {
+                    $('#change-sub').show();
+                }
+                console.log(subData[0])
+                if (subData.length != 0) {
+                    runningDays = subData[0].accumulatedRunningTime;
+                    todayChCap = subData[0].charCapDay;
+                    todayDiCap = subData[0].discCapDay;
+                    subStatus = subData[0].stationStatus;
+                    accumulatedChCap = subData[0].accumulatedChargeTime;
+                    accumulatedDiCap = subData[0].accumulatedDischargeTime;
+                    soc = subData[0].soc;
+                    realTimeActivePower = subData[0].totW;
+                    ableEnergyChCap = subData[0].ableCharCap;
+                    todayChDiTimes = subData[0].dailyCgCnt;
+                    monthChDiTimes = subData[0].monthlyCgCnt;
+                    ableEnergyDiCap = subData[0].ableDiscCap;
+                    accumulatedIncome = subData[0].accumulatedRev;
+                    todayIncome = subData[0].todayRev;
+                    lastDayIncome = subData[0].yesterdayRev;
+                    comprehensiveEfficiency = subData[0].overallEfficiency;
+                    runningFactor = subData[0].runningFactor;
+                    utilizationRate = subData[0].utilRateInd;
+                    lossRate = subData[0].storageScrapRate;
+                    utilizationFactor = subData[0].utilFactor;
+                    equivalentChDiTimes = subData[0].equivalentChargeDischargeTime;
+                }
 
-                runningDays = response.data.accumulatedRunningTime;
-                todayChCap = response.data.charCapDay;
-                todayDiCap = response.data.discCapDay;
-                subStatus = response.data.stationStatus;
-                accumulatedChCap = response.data.accumulatedChargeTime;
-                accumulatedDiCap = response.data.accumulatedDischargeTime;
-                soc = response.data.soc;
-                realTimeActivePower = response.data.totW;
-                ableEnergyChCap = response.data.ableCharCap;
-                todayChDiTimes = response.data.dailyCgCnt;
-                monthChDiTimes = response.data.monthlyCgCnt;
-                ableEnergyDiCap = response.data.ableDiscCap;
-                accumulatedIncome = response.data.accumulatedRev;
-                todayIncome = response.data.todayRev;
-                lastDayIncome = response.data.yesterdayRev;
-                comprehensiveEfficiency = response.data.overallEfficiency;
-                runningFactor = response.data.runningFactor;
-                utilizationRate = response.data.utilRateInd;
-                lossRate = response.data.storageScrapRate;
-                utilizationFactor = response.data.utilFactor;
-                equivalentChDiTimes = response.data.equivalentChargeDischargeTime;
-            } )
-                .finally(function () {
-                    $('#running-days').html("累计运行   "+'<span style="color: #a233c6; margin-left: 20px;">' + runningDays + '</span> <span>天</span>')
-                    // 今日充电量
-                    $("#todayChCap").html('<span class="sub-running-status-num">' + todayChCap + '</span> <span>MWh</span>');
-                    // 今日放电量
-                    $("#todayDiCap").html('<span class="sub-running-status-num">' + todayDiCap + '</span> <span>MWh</span>');
-                    // 电站状态
-                    $("#subStatus").html('<span style="color: green">' + subStatus + '</span>');
-                    // 累计充电量
-                    $("#accumulatedChCap").html('<span class="sub-running-status-num">' + accumulatedChCap + '</span> <span>MWh</span>');
-                    // 累计放电量
-                    $("#accumulatedDiCap").html('<span class="sub-running-status-num">' + accumulatedDiCap + '</span> <span>MWh</span>');
-                    $("#soc").html('<span class="sub-running-status-num">' + soc + '</span> <span>%</span>');
-                    // 实时有功
-                    $("#realTimeActivePower").html('<span class="sub-running-status-num">' + realTimeActivePower + '</span> <span>MWh</span>');
-                    // 实时无功
-                    $("#realTimeReactivePower").html('<span class="sub-running-status-num">' + realTimeReactivePower + '</span> <span>MWh</span>');
-                    // 可充电量
-                    $("#ableEnergyChCap").html('<span class="sub-running-status-num">' + ableEnergyChCap + '</span> <span>MWh</span>');
-                    // 今日充放电次数
-                    $("#todayChDiTimes").html('<span class="sub-running-status-num">' + todayChDiTimes + '</span>');
-                    // 本月充放电次数
-                    $("#monthChDiTimes").html('<span class="sub-running-status-num">' + monthChDiTimes + '</span>');
-                    // 可放电量
-                    $("#ableEnergyDiCap").html('<span class="sub-running-status-num">' + ableEnergyDiCap + '</span> <span>MWh</span>');
-                    $('#accumulated-income').html('<span style="font-weight: bold;">'+ accumulatedIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#today-income').html('<span style="font-weight: bold;">'+ todayIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#lastDay-income').html('<span style="font-weight: bold;">'+ lastDayIncome +'</span><span style="font-size: 16px !important;">万元</span>');
-                    $('#comprehensiveEfficiency').text(comprehensiveEfficiency + '%');
-                    $('#runningFactor').text(runningFactor);
-                    $('#utilizationRate').text(utilizationRate + '%');
-                    $('#lossRate').text(lostRate + '%');
-                    $('#utilizationFactor').text(utilizationFactor);
-                    $('#equivalentChDiTimes').text(equivalentChDiTimes);
-                })
+            })
+            .finally(function () {
+                renderSubData();
+            })
 
         $("#logout").on('click', function (response) {
-                axios.get('/sys/logout', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+            axios.get('/sys/logout', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    window.location.href = "/login.html";
                 })
-                    .then(response => {
-                        window.location.href = "/login.html";
-                    })
-                    .catch(error => {
-                        console.error('Logout error:', error);
-                    });
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
 
         })
 
+        dropdown.render({
+            elem: '#change-sub',
+            data: dropdownArr,
+            click: function (obj) {
+                this.elem.val(obj.title);
+                this.elem.find('span').text(obj.title);
 
+                runningDays = subData[obj.id].accumulatedRunningTime;
+                todayChCap = subData[obj.id].charCapDay;
+                todayDiCap = subData[obj.id].discCapDay;
+                subStatus = subData[obj.id].stationStatus;
+                accumulatedChCap = subData[obj.id].accumulatedChargeTime;
+                accumulatedDiCap = subData[obj.id].accumulatedDischargeTime;
+                soc = subData[obj.id].soc;
+                realTimeActivePower = subData[obj.id].totW;
+                ableEnergyChCap = subData[obj.id].ableCharCap;
+                todayChDiTimes = subData[obj.id].dailyCgCnt;
+                monthChDiTimes = subData[obj.id].monthlyCgCnt;
+                ableEnergyDiCap = subData[obj.id].ableDiscCap;
+                accumulatedIncome = subData[obj.id].accumulatedRev;
+                todayIncome = subData[obj.id].todayRev;
+                lastDayIncome = subData[obj.id].yesterdayRev;
+                comprehensiveEfficiency = subData[obj.id].overallEfficiency;
+                runningFactor = subData[obj.id].runningFactor;
+                utilizationRate = subData[obj.id].utilRateInd;
+                lossRate = subData[0].storageScrapRate;
+                utilizationFactor = subData[0].utilFactor;
+                equivalentChDiTimes = subData[0].equivalentChargeDischargeTime;
+                renderSubData();
+            }
+        })
+
+        function renderSubData() {
+            $('#running-days').html("累计运行   " + '<span style="color: #a233c6; margin-left: 20px;">' + runningDays + '</span> <span>天</span>')
+            // 今日充电量
+            $("#todayChCap").html('<span class="sub-running-status-num">' + todayChCap + '</span> <span>MWh</span>');
+            // 今日放电量
+            $("#todayDiCap").html('<span class="sub-running-status-num">' + todayDiCap + '</span> <span>MWh</span>');
+            // 电站状态
+            $("#subStatus").html('<span style="color: green">' + subStatus + '</span>');
+            // 累计充电量
+            $("#accumulatedChCap").html('<span class="sub-running-status-num">' + accumulatedChCap + '</span> <span>MWh</span>');
+            // 累计放电量
+            $("#accumulatedDiCap").html('<span class="sub-running-status-num">' + accumulatedDiCap + '</span> <span>MWh</span>');
+            $("#soc").html('<span class="sub-running-status-num">' + soc + '</span> <span>%</span>');
+            // 实时有功
+            $("#realTimeActivePower").html('<span class="sub-running-status-num">' + realTimeActivePower + '</span> <span>MWh</span>');
+            // 实时无功
+            $("#realTimeReactivePower").html('<span class="sub-running-status-num">' + realTimeReactivePower + '</span> <span>MWh</span>');
+            // 可充电量
+            $("#ableEnergyChCap").html('<span class="sub-running-status-num">' + ableEnergyChCap + '</span> <span>MWh</span>');
+            // 今日充放电次数
+            $("#todayChDiTimes").html('<span class="sub-running-status-num">' + todayChDiTimes + '</span>');
+            // 本月充放电次数
+            $("#monthChDiTimes").html('<span class="sub-running-status-num">' + monthChDiTimes + '</span>');
+            // 可放电量
+            $("#ableEnergyDiCap").html('<span class="sub-running-status-num">' + ableEnergyDiCap + '</span> <span>MWh</span>');
+            $('#accumulated-income').html('<span style="font-weight: bold;">' + accumulatedIncome + '</span><span style="font-size: 16px !important;">万元</span>');
+            $('#today-income').html('<span style="font-weight: bold;">' + todayIncome + '</span><span style="font-size: 16px !important;">万元</span>');
+            $('#lastDay-income').html('<span style="font-weight: bold;">' + lastDayIncome + '</span><span style="font-size: 16px !important;">万元</span>');
+            $('#comprehensiveEfficiency').text(comprehensiveEfficiency + '%');
+            $('#runningFactor').text(runningFactor);
+            $('#utilizationRate').text(utilizationRate + '%');
+            $('#lossRate').text(lostRate + '%');
+            $('#utilizationFactor').text(utilizationFactor);
+            $('#equivalentChDiTimes').text(equivalentChDiTimes);
+        }
 
 
         var dayAverage = 1111.11;
@@ -476,11 +551,11 @@
                     show: true,
                     areaStyle: {
                         color: [
-                            "lightgrey",
+                            "#dfdfdf",
                             "white",
-                            "lightgrey",
+                            "#dfdfdf",
                             "white",
-                            "lightgrey",
+                            "#dfdfdf",
                             "white",
                         ]
                     }
@@ -489,200 +564,251 @@
             series: [
                 {
                     name: '销量',
-                    type: 'line',  // 柱状
+                    type: 'line',
                     data: seriesData,
                     itemStyle: {
                         normal: {
-                            color: '#4ad2ff'  // 柱子颜色
+                            color: '#40c0ff'
                         }
                     },
                     areaStyle: {
-                        color: "skyblue"
+                        color: "#d8e2f2"
                     }
                 }
             ]
         }
         incomeChart.setOption(incomeChartOption);
 
-        var bmsCount = 10;
-        var bmsAlarmCount = 2;
+
+
+        var bmsCounts = 0;
+        var bmsAlarmCounts = 0;
+        var pcsCounts = 0;
+        var pcsAlarmCounts = 0;
+        var airConditionCounts = 0;
+        var airConditionAlarmCounts = 0;
+        var fireControlCounts = 0;
+        var fireControlAlarmCounts = 0;
         var bmsChart = echarts.init(document.getElementById('bms-status'));
         var pcsChart = echarts.init(document.getElementById('pcs-status'));
         var airConditionerChart = echarts.init(document.getElementById('air-conditioner-status'));
         var fireControlChart = echarts.init(document.getElementById('fire-control-status'));
-        var bmsOption = {
-            tooltip: {},
-            title: [{
-                text: 'BMS',
-                top: 'center',
-                left: 'center',
-                textStyle: {
-                    color: '#000',
-                    fontSize: 20
-                }
-            }],
-            series: [
-                {
-                    type: "pie",
-                    radius: ["50%", "70%"],
-                    center: ["50%", "50%"],
-                    avoidLabelOverlap: false,
-                    hoverAnimation: true,
-                    label: {
-                        show: false,
-                        position: 'center',
-                    },
-                    data: [
+
+        axios.get('/pcs/faultCounts', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(function (response) {
+                console.log("pcs "+response)
+                pcsCounts = response.data.totalCounts;
+                pcsAlarmCounts = response.data.faultCounts;
+            })
+
+        axios.get('/fireControl/faultCounts', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(function (response) {
+                console.log(response)
+
+                fireControlCounts = response.data.totalCounts;
+                fireControlAlarmCounts = response.data.faultCounts;
+            })
+
+
+
+
+        axios.get('/bms/faultCounts', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(function (response) {
+                console.log(response)
+                bmsCounts = response.data.totalCounts;
+                bmsAlarmCounts = response.data.faultCounts;
+                console.log(bmsCounts, bmsAlarmCounts)
+
+                var bmsOption = {
+                    tooltip: {},
+                    backgroundColor: '#f6f8fb',
+                    title: [{
+                        text: 'BMS',
+                        top: 'center',
+                        left: 'center',
+                        textStyle: {
+                            color: '#000',
+                            fontSize: 20
+                        }
+                    }],
+                    series: [
                         {
-                            name: '告警数量',
-                            value: bmsAlarmCount,
-                            itemStyle: {color: "#1e9fff"},
-                        },
-                        {
-                            name: '正常数量',
-                            value: bmsCount-bmsAlarmCount,
-                            itemStyle: {color: "#999999"}
+                            type: "pie",
+                            radius: ["50%", "70%"],
+                            center: ["50%", "50%"],
+                            avoidLabelOverlap: false,
+                            hoverAnimation: true,
+                            label: {
+                                show: false,
+                                position: 'center',
+                            },
+                            data: [
+                                {
+                                    name: '告警数量',
+                                    value: bmsAlarmCounts,
+                                    itemStyle: {color: "#4080ff"},
+                                },
+                                {
+                                    name: '正常数量',
+                                    value: bmsCounts - bmsAlarmCounts,
+                                    itemStyle: {color: "#cccccc"}
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        };
-        var pcsOption = {
-            tooltip: {},
-            title: [{
-                text: 'PCS',
-                top: 'center',
-                left: 'center',
-                textStyle: {
-                    color: '#000',
-                    fontSize: 20
-                }
-            }],
-            series: [
-                {
-                    type: "pie",
-                    radius: ["50%", "70%"],
-                    center: ["50%", "50%"],
-                    avoidLabelOverlap: false,
-                    hoverAnimation: true,
-                    label: {
-                        show: false,
-                        position: 'center',
-                    },
-                    data: [
+                };
+                var pcsOption = {
+                    tooltip: {},
+                    backgroundColor: '#f6f8fb',
+                    title: [{
+                        text: 'PCS',
+                        top: 'center',
+                        left: 'center',
+                        textStyle: {
+                            color: '#000',
+                            fontSize: 20
+                        }
+                    }],
+                    series: [
                         {
-                            name: '告警数量',
-                            value: bmsAlarmCount,
-                            itemStyle: {color: "#1e9fff"},
-                        },
-                        {
-                            name: '正常数量',
-                            value: bmsCount-bmsAlarmCount,
-                            itemStyle: {color: "#999999"}
+                            type: "pie",
+                            radius: ["50%", "70%"],
+                            center: ["50%", "50%"],
+                            avoidLabelOverlap: false,
+                            hoverAnimation: true,
+                            label: {
+                                show: false,
+                                position: 'center',
+                            },
+                            data: [
+                                {
+                                    name: '告警数量',
+                                    value: pcsAlarmCounts,
+                                    itemStyle: {color: "#4080ff"},
+                                },
+                                {
+                                    name: '正常数量',
+                                    value: pcsCounts - pcsAlarmCounts,
+                                    itemStyle: {color: "#cccccc"}
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        };
-        var airConditionerOption = {
-            tooltip: {},
-            title: [{
-                text: '空调',
-                top: 'center',
-                left: 'center',
-                textStyle: {
-                    color: '#000',
-                    fontSize: 20
-                }
-            }],
-            series: [
-                {
-                    type: "pie",
-                    radius: ["50%", "70%"],
-                    center: ["50%", "50%"],
-                    avoidLabelOverlap: false,
-                    hoverAnimation: true,
-                    label: {
-                        show: false,
-                        position: 'center',
-                    },
-                    data: [
+                };
+                var airConditionerOption = {
+                    tooltip: {},
+                    backgroundColor: '#f6f8fb',
+                    title: [{
+                        text: '空调',
+                        top: 'center',
+                        left: 'center',
+                        textStyle: {
+                            color: '#000',
+                            fontSize: 20
+                        }
+                    }],
+                    series: [
                         {
-                            name: '告警数量',
-                            value: bmsAlarmCount,
-                            itemStyle: {color: "green"},
-                        },
-                        {
-                            name: '正常数量',
-                            value: bmsCount-bmsAlarmCount,
-                            itemStyle: {color: "#999999"}
+                            type: "pie",
+                            radius: ["50%", "70%"],
+                            center: ["50%", "50%"],
+                            avoidLabelOverlap: false,
+                            hoverAnimation: true,
+                            label: {
+                                show: false,
+                                position: 'center',
+                            },
+                            data: [
+                                {
+                                    name: '告警数量',
+                                    value: airConditionAlarmCounts,
+                                    itemStyle: {color: "#00c0a0"},
+                                },
+                                {
+                                    name: '正常数量',
+                                    value: airConditionCounts - airConditionAlarmCounts,
+                                    itemStyle: {color: "#cccccc"}
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        };
-        var fireControlOption = {
-            tooltip: {},
-            title: [{
-                text: '消防',
-                top: 'center',
-                left: 'center',
-                textStyle: {
-                    color: '#000',
-                    fontSize: 20
-                }
-            }],
-            series: [
-                {
-                    type: "pie",
-                    radius: ["50%", "70%"],
-                    center: ["50%", "50%"],
-                    avoidLabelOverlap: false,
-                    hoverAnimation: true,
-                    label: {
-                        show: false,
-                        position: 'center',
-                    },
-                    data: [
+                };
+                var fireControlOption = {
+                    tooltip: {},
+                    backgroundColor: '#f6f8fb',
+                    title: [{
+                        text: '消防',
+                        top: 'center',
+                        left: 'center',
+                        textStyle: {
+                            color: '#000',
+                            fontSize: 20
+                        }
+                    }],
+                    series: [
                         {
-                            name: '告警数量',
-                            value: bmsAlarmCount,
-                            itemStyle: {color: "green"},
-                        },
-                        {
-                            name: '正常数量',
-                            value: bmsCount-bmsAlarmCount,
-                            itemStyle: {color: "#999999"}
+                            type: "pie",
+                            radius: ["50%", "70%"],
+                            center: ["50%", "50%"],
+                            avoidLabelOverlap: false,
+                            hoverAnimation: true,
+                            label: {
+                                show: false,
+                                position: 'center',
+                            },
+                            data: [
+                                {
+                                    name: '告警数量',
+                                    value: fireControlAlarmCounts,
+                                    itemStyle: {color: "#00c0a0"},
+                                },
+                                {
+                                    name: '正常数量',
+                                    value: fireControlCounts - fireControlAlarmCounts,
+                                    itemStyle: {color: "#cccccc"}
+                                }
+                            ]
                         }
                     ]
-                }
-            ]
-        };
+                };
 
-        bmsChart.setOption(bmsOption);
-        pcsChart.setOption(pcsOption);
-        airConditionerChart.setOption(airConditionerOption);
-        fireControlChart.setOption(fireControlOption)
+                bmsChart.setOption(bmsOption);
+                pcsChart.setOption(pcsOption);
+                airConditionerChart.setOption(airConditionerOption);
+                fireControlChart.setOption(fireControlOption)
 
+                $('#equipment-status .layui-col-md3:first-child .equipment-counts').html("设备总数: &nbsp; " + bmsCounts);
+                $('#equipment-status .layui-col-md3:first-child .alarm-counts').html("告警数量: &nbsp;" + bmsAlarmCounts);
+                $('#equipment-status .layui-col-md3:nth-child(2) .equipment-counts').html("设备总数: &nbsp;" + pcsCounts);
+                $('#equipment-status .layui-col-md3:nth-child(2) .alarm-counts').html("告警数量: &nbsp;" + pcsAlarmCounts);
+                $('#equipment-status .layui-col-md3:nth-child(3) .equipment-counts').html("设备总数: &nbsp;" + airConditionCounts);
+                $('#equipment-status .layui-col-md3:nth-child(3) .alarm-counts').html("告警数量: &nbsp;" + airConditionAlarmCounts);
+                $('#equipment-status .layui-col-md3:nth-child(4) .equipment-counts').html("设备总数: &nbsp;" + fireControlCounts);
+                $('#equipment-status .layui-col-md3:nth-child(4) .alarm-counts').html("告警数量: &nbsp;" + fireControlAlarmCounts);
 
+            })
 
-
-        $('#equipment-status .layui-col-md3:first-child .equipment-counts').html("设备总数: &nbsp; "+bmsCount);
-        $('#equipment-status .layui-col-md3:first-child .alarm-counts').html("告警数量: &nbsp;"+bmsAlarmCount);
-        $('#equipment-status .layui-col-md3:nth-child(2) .equipment-counts').html("设备总数: &nbsp;"+bmsCount);
-        $('#equipment-status .layui-col-md3:nth-child(2) .alarm-counts').html("告警数量: &nbsp;"+bmsAlarmCount);
-        $('#equipment-status .layui-col-md3:nth-child(3) .equipment-counts').html("设备总数: &nbsp;"+bmsCount);
-        $('#equipment-status .layui-col-md3:nth-child(3) .alarm-counts').html("告警数量: &nbsp;"+bmsAlarmCount);
-        $('#equipment-status .layui-col-md3:nth-child(4) .equipment-counts').html("设备总数: &nbsp;"+bmsCount);
-        $('#equipment-status .layui-col-md3:nth-child(4) .alarm-counts').html("告警数量: &nbsp;"+bmsAlarmCount);
 
         var realTimeChart = echarts.init(document.getElementById('real-time-data-chart'));
         var realTimeOption = {
             tooltip: {},
-            legend:{
-                data:['有功功率', '无功功率'],
+            legend: {
+                data: ['有功功率', '无功功率'],
                 right: 20
             },
+            backgroundColor: '#ffffff',
             grid: {
                 x: 45,
                 y: 30,
@@ -690,14 +816,14 @@
                 y2: 20
             },
             xAxis: {
-                data: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
             },
             yAxis: {
                 type: 'value',
                 splitArea: {
                     show: true,
                     areaStyle: {
-                        color: ['lightgrey','white','lightgrey','white','lightgrey','white']
+                        color: ['#dfdfdf', 'white', '#dfdfdf', 'white', '#dfdfdf', 'white']
                     }
                 }
             },
@@ -707,7 +833,7 @@
                     type: 'line',
                     data: seriesData,
                     itemStyle: {
-                        color: '#4ad2ff'
+                        color: '#568eff'
                     }
                 },
                 {
@@ -715,7 +841,7 @@
                     type: 'line',
                     data: xAxisData,
                     itemStyle: {
-                        color: 'orange'
+                        color: '#ffc000'
                     }
                 },
             ]
@@ -729,14 +855,11 @@
     }
 
 
-
-
-
 </script>
 </body>
 <style>
     body {
-        background-color: #e2e2e2;
+        background-color: #f2f8ff;
     }
 
     .page-button {
@@ -761,9 +884,9 @@
 
     #sub-running-status {
         padding: 15px;
-        border: solid #e2e2e2 1px;
+        border: solid transparent 1px;
         border-radius: 15px;
-        background-color: #F2F2F2;
+        background-color: #ffffff;
     }
 
     .sub-running-status-num {
@@ -774,7 +897,7 @@
         display: flex;
         align-items: center;
         padding: 10px 25px;
-        background-color: #e2e2e2;
+        background-color: #f6f8fb;
     }
 
     #sub-running-status .layui-col-md6 div:first-child {
@@ -805,17 +928,17 @@
 
     #income {
         margin-top: 15px;
-        border: solid 1px #F2F2F2;
+        border: solid 1px transparent;
         border-radius: 15px;
-        background-color: #F2F2F2;
+        background-color: #ffffff;
         padding: 10px 10px 300px 10px;
     }
 
     #income .income-type {
         color: #F2F2F2;
         display: inline-block;
-        width: calc(32% - 5px );
-        border: 1px solid skyblue;
+        width: calc(32% - 5px);
+        border: 1px solid transparent;
         border-radius: 10px;
     }
 
@@ -866,7 +989,7 @@
         margin-left: 30px;
         display: block;
         font-size: 24px;
-        color: #1E9FFF;
+        color: #4080ff;
     }
 
     #change-month-chart, #change-year-chart {
@@ -878,7 +1001,7 @@
 
     .is-choose {
         color: #F2F2F2 !important;
-        background-color: #1e9fff !important;
+        background-color: #4080ff !important;
     }
 
     .is-choose:hover {
@@ -887,16 +1010,16 @@
 
     #evaluation-analysis {
         color: #F2F2F2;
-        background-color: #F2F2F2;
-        border: 1px solid #F2F2F2;
+        background-color: #ffffff;
+        border: 1px solid transparent;
         border-radius: 15px;
         padding: 15px;
     }
 
     .evaluation-analysis-part {
-        background-color: skyblue;
+        background-color: #73a8ff;
         padding: 3px;
-        border: 3px solid skyblue;
+        border: 3px solid transparent;
         border-radius: 6px;
     }
 
@@ -909,8 +1032,8 @@
     #equipment-status {
         padding: 15px;
         margin-top: 15px;
-        background-color: #F2F2F2;
-        border: 1px solid #F2F2F2;
+        background-color: #ffffff;
+        border: 1px solid transparent;
         border-radius: 15px;
     }
 
@@ -922,7 +1045,7 @@
     .equipment-counts, .alarm-counts {
         text-align: center;
         font-size: 18px;
-        background-color: #e2e2e2;
+        background-color: #f6f8fb;
     }
 
     .equipment-counts {
@@ -932,14 +1055,14 @@
 
     .alarm-counts {
         padding-bottom: 10px;
-        color: red;
+        color: #a40d0d;
     }
 
     #real-time-data {
         margin-top: 15px;
         padding-top: 15px;
-        background-color: #F2F2F2;
-        border: 1px solid #f2f2f2;
+        background-color: #ffffff;
+        border: 1px solid transparent;
         border-radius: 15px;
     }
 

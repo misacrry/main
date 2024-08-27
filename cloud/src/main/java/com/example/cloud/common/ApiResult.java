@@ -27,6 +27,11 @@ public class ApiResult<T> implements Serializable {
 
     }
 
+    public ApiResult(int code, T data) {
+        this.code = code;
+        this.data = data;
+    }
+
     //定义成功的构造器
     private ApiResult(T data){
         this.code = ApiCode.SUCCESS.getCode();

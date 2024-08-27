@@ -81,7 +81,7 @@
 <!--          <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat" style="color: #4daf29;"></i></a>-->
 <!--          <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo" style="color: #cf1900;"></i></a>-->
 <!--        </span>-->
-<!--      或 <a href="#reg">注册帐号</a></span>-->
+       <a href="#reg">注册帐号</a></span>
 <!--    </div>-->
   </div>
 </form>
@@ -93,6 +93,7 @@
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
   }
+
   layui.use(function () {
     var $ = layui.$;
     var form = layui.form;

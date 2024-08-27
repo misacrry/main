@@ -9,9 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Bms {
 
+  private Integer id;
+  private Integer pointId;
+  private Integer equipmentId;
   private long bmsTotWarning;
   private long bmsTotFault;
   private long batteryStackVoltLimit;
   private long batteryStackCurLimit;
 
+  private int totalCounts;
+  private int faultCounts;
 }

@@ -10,23 +10,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GridConnectionPoint {
 
-  private long id;
-  private double phaseAbLineV;
-  private double phaseBcLineV;
-  private double phaseCaLineV;
-  private double phaseAv;
-  private double phaseBv;
-  private double phaseCv;
-  private double phaseAi;
-  private double phaseBi;
-  private double phaseCi;
+  private int id;
+  private int subId;
+  private double phaseABLineV;
+  private double phaseBCLineV;
+  private double phaseCALineV;
+  private double phaseAV;
+  private double phaseBV;
+  private double phaseCV;
+  private double phaseAI;
+  private double phaseBI;
+  private double phaseCI;
   private double activeP;
   private double reactiveP;
   private double powerFactor;
-  private String switchStatus;
+  private int switchStatus;
   private double totalChargeElectricity;
   private double totalDischargeElectricity;
   private double totalChargePrice;
   private double totalDischargePrice;
-
+  
 }
