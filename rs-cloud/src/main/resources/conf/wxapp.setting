@@ -1,0 +1,9 @@
+# AppID(小程序ID)
+app_id = wxb85bc27366fff272
+
+# AppSecret(小程序密钥)
+app_secret = 5fe28a9bc774a630b039570842ee04fe
+
+# 网页地址(公网地址)
+# web_attr = https://app.ruishan.cn/api/login
+web_attr = http://localhost:8001/api/login

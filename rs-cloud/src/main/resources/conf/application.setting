@@ -1,0 +1,18 @@
+# 图形文件存储路径
+graph-file-path = D:/GraphFile/
+# 模型文件存储目录
+model-file-path = D:/ModelFile/
+# mqtt主机地址
+mqtt-host = rsdw.f3322.net
+# web主机地址
+web-host = http://rsdw.f3322.net:8002
+# 消息告警主机地址
+alarm-msg-host = http://192.168.0.55
+# 数据库容量
+dbCapacity = 10240
+# 脚本文件存储路径
+script-file-path = D:/ScriptFile/
+# 运维文档路径
+document-path = D:/devopsDocument/
+# 脚本服务主机地址
+script-host = http://127.0.0.1:8065

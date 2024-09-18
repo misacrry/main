@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="assets/libs/layui/css/layui.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="assets/css/header.css" type="text/css">
+<body>
+<div id="header"></div>
+<div class="layui-tab layui-tab-brief">
+    <ul id="gcPointTab" class="layui-tab-title" style="text-align: center">
+    </ul>
+    <div id="bms-content"></div>
+    <div id="tablesContainer"></div>
+</div>
+<div id="main-body"></div>
+</body>
+<script src="assets/libs/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.js" type="text/javascript"></script>
+<script src="assets/libs/layui/layui.js" type="text/javascript"></script>
+<script src="assets/js/main.js" type="text/javascript"></script>
+<script src="assets/js/header.js" type="text/javascript"></script>
+<script>
+    var table;
+    var token;
+    layui.use(['form', 'dropdown', 'admin', 'setter'], function () {
+        var $ = layui.$;
+        var dropdown = layui.dropdown;
+        var admin = layui.admin;
+        var setter = layui.setter;
+        table = layui.table;
+        token = admin.getToken().access_token;
+
+        var subId = 1;
+        var gcPointData = [];
+        getPoint(subId);
+        var dropdownArr = [];
+
+        admin.req('iac/substation/runningStatus', function (response) {
+            if (response.data.code === 500) {
+                console.log("跳转")
+                window.location.href = "login.html";
+            }
+            var subData = response.data;
+            var subCounts = subData.length;
+            if (subCounts >= 1) {
+                for (var i = 1; i <= subCounts; i++) {
+                    dropdownArr.push({title: "储能站" + subData[i - 1].id, id: subData[i - 1].id});
+                }
+            }
+            if (subCounts === 1) {
+                console.log("隐藏")
+                $('#change-sub').hide();
+            } else {
+                $('#change-sub').show();
+            }
+        })
+
+
+        $("#logout").on('click', function (response) {
+            axios.get('/sys/logout', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    window.location.href = "/login.html";
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+
+        })
+        generateHeader();
+        $('#current-day').html(currentDay);
+        updateTime();
+        dropdown.render({
+            elem: '#setting',
+            data: [
+                {title: "定时充放电", id: 1},
+                {title: "计划曲线", id: 2},
+                {title: "后台管理", id: 3},
+            ],
+            click: function (obj) {
+                if (obj.id === 1) {
+                    window.location.href = "/scheduledChDi.html";
+                } else if (obj.id === 2) {
+                    window.location.href = "/plannedCurve.html";
+                } else if (obj.id === 3) {
+                    window.location.href = "/backManage.html";
+                }
+            }
+        })
+        dropdown.render({
+            elem: '#change-sub',
+            data: dropdownArr,
+            click: function (obj) {
+                this.elem.val(obj.title);
+                this.elem.find('span').text(obj.title);
+                getPoint(obj.id)
+            }
+        })
+        dropdown.render({
+            elem: '#user-action',
+            data: [
+                {title: '修改密码', id: 99},
+                {title: '退出登录', id: 100},
+            ],
+            click: function (obj) {
+                // this.elem.find('span').text(obj.title);
+                if (obj.id === 99) {
+                    changePswd();
+                } else if (obj.id === 100) {
+                    logout();
+                }
+            }
+        })
+
+        // 生成并网点tab页
+        function generateTabTitle(gcPointData) {
+            console.log(gcPointData)
+            $('#gcPointTab').empty();
+            for (let i = 1; i <= gcPointData.length; i++) {
+                if (i===1){
+                    $("#gcPointTab").append('<li class="layui-this" onclick="changePoint('+gcPointData[i-1].id+')" value='+gcPointData[i-1].id+'>'+"并网点"+i+'</li>');
+                } else {
+                    $("#gcPointTab").append('<li onclick="changePoint('+gcPointData[i-1].id+')" value='+gcPointData[i-1].id+'>'+"并网点"+i+'</li>');
+                }
+            }
+            if (gcPointData.length !== 0) {
+                changePoint(gcPointData[0].id);
+            }
+        }
+
+        // 根据储能站查并网点
+        function getPoint(subId) {
+            axios.get('iac/gcPoint/selectListBySubId', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    subId: subId
+                }
+            })
+                .then(function (response) {
+                    console.log(response)
+                    if(response.data.length !== 0) {
+                        gcPointData = response.data;
+                        generateTabTitle(gcPointData.data);
+                    }
+                    var pointArr = [];
+                    for (let i = 0; i < response.data.length; i++) {
+                        pointArr.push(response.data[i].id);
+                    }
+                })
+        }
+
+
+
+
+
+    })
+
+    // 切换并网点tab
+    function changePoint(pointId) {
+        console.log("pointId  "+pointId)
+        axios.get('iac/bms/selectBmsListByPointId', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                pointId: pointId
+            }
+        })
+            .then(function (response) {
+                generateBmsTable(response.data.data);
+            })
+    }
+
+    function generateBmsTable(bmsData) {
+        $('#bms-content').empty();
+        for (let i = 0; i < bmsData.length; i++) {
+            var bmsId = "bms-table-" + i;
+            $('#bms-content').append('<di class="bms-container" id="'+"bms-container-"+i+'"></div>');
+            $('#bms-container-'+i).append(`<div class="bms-title">${i+1}#BMS</div>`);
+            $('#bms-container-'+i).append('<di class="bms-table-container" id="'+bmsId+1+'"></div>');
+            $('#'+bmsId+1).append('<div id="'+'bms-table-part1-'+i+'"></div>');
+            $('#'+bmsId+1).append('<div id="'+'bms-table-part2-'+i+'"></div>');
+            $('#'+bmsId+1).append('<div id="'+'bms-table-part3-'+i+'"></div>');
+            $('#'+bmsId+1).append('<div id="'+'bms-table-part4-'+i+'"></div>');
+
+            table.render({
+                elem: '#bms-table-part1-'+i,
+                verticalDisplay: true,
+                width: '50%',
+                page: false,
+                cols: [[
+                    {field:'voltage', title:'电压', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.voltage}}</div>'},
+                    {field:'current', title:'电流', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.current}}</div>'},
+                    {field:'soc', title:'SOC', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.soc}}</div>'},
+                    {field:'soh', title:'SOH', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.soh}}</div>'},
+                    {field:'ableCharCap', title:'可充电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.ableCharCap}}</div>'},
+                ]],
+                data: [bmsData[i]]
+            })
+
+            table.render({
+                elem: '#bms-table-part2-'+i,
+                verticalDisplay: true,
+                width: '50%',
+                page: false,
+                cols: [[
+                    {field:'ableDiscCap', title:'可放电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.ableDiscCap}}</div>'},
+                    {field:'maxVol', title:'最高电压', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.maxVol}}</div>'},
+                    {field:'minVol', title:'最低电压', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.minVol}}</div>'},
+                    {field:'maxTem', title:'最高温度', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.maxTem}}</div>'},
+                    {field:'minTem', title:'最低温度', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.minTem}}</div>'},
+                ]],
+                data: [bmsData[i]]
+            })
+
+            var yxArr = [
+                {totWarning: 0, totFault: 1, prohibitCharge: 0, prohibitDischarge: 1}
+            ]
+            table.render({
+                elem: '#bms-table-part3-'+i,
+                verticalDisplay: true,
+                page: false,
+                width: '50%',
+                cols: [[
+                    {field:'totWarning', title:'告警总', width: 100,
+                        templet: function (d) {
+                            if(d.totWarning === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                                // return '<img class="yx-icon" src="icon/circle-red.png">'
+                            } else if (d.totWarning === 0) {
+                                return '<div class="normal-status">正常</div>'
+                                // return '<img class="yx-icon" src="icon/circle-green.png">'
+                            } else {
+                                console.log(d.totWarning)
+                            }
+                        }
+                    },
+                    {field:'totFault', title:'故障总', width: 100,
+                        templet: function (d) {
+                            if(d.totFault === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.totFault === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'prohibitCharge', title:'禁止充电', width: 100,
+                        templet: function (d) {
+                            if(d.prohibitCharge === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.prohibitCharge === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'prohibitDischarge', title:'禁止放电', width: 100,
+                        templet: function (d) {
+                            if(d.prohibitDischarge === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.prohibitDischarge === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                ]],
+                data: yxArr
+            })
+
+        }
+
+    }
+
+
+</script>
+
+<style>
+    body {
+        background-color: #f2f8ff;
+    }
+
+    .bms-container{
+        display: block;
+        background-color: #ffffff;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        padding: 30px;
+    }
+
+    .layui-table-view {
+        margin: 0 auto !important;
+    }
+
+    .bms-table-container {
+        /*width: 50%;*/
+        display: flex;
+    }
+
+    .bms-title {
+        width: 50%;
+        margin-bottom: 20px;
+        color: #333333;
+        height: 60px;
+        line-height: 60px;
+        font-size: 26px;
+        margin-left: 50px;
+    }
+</style>
+
+</html>

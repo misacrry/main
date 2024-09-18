@@ -1,0 +1,130 @@
+{
+  "msg": "",
+  "code": 200,
+  "data": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "实时监测",
+          "value": 1,
+          "selected": true
+        },
+        {
+          "children": [],
+          "name": "故障告警",
+          "value": 2
+        },
+        {
+          "children": [],
+          "name": "weer",
+          "value": 21
+        },
+        {
+          "children": [],
+          "name": "lll",
+          "value": 23
+        },
+        {
+          "children": [],
+          "name": "运行值班",
+          "value": 3
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "巡视计划",
+              "value": 12
+            },
+            {
+              "children": [],
+              "name": "巡视标准",
+              "value": 13
+            },
+            {
+              "children": [],
+              "name": "巡视记录",
+              "value": 14
+            }
+          ],
+          "name": "设备巡视",
+          "value": 4
+        },
+        {
+          "children": [],
+          "name": "jjj",
+          "value": 22
+        },
+        {
+          "children": [],
+          "name": "故障消缺",
+          "value": 5
+        },
+        {
+          "children": [],
+          "name": "故障抢修",
+          "value": 6
+        },
+        {
+          "children": [],
+          "name": "ggg",
+          "value": 20
+        },
+        {
+          "children": [],
+          "name": "报表管理",
+          "value": 7
+        },
+        {
+          "children": [],
+          "name": "设备台账",
+          "value": 8
+        },
+        {
+          "children": [],
+          "name": "专家知识库",
+          "value": 9
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "用户管理",
+              "value": 15
+            },
+            {
+              "children": [],
+              "name": "角色管理",
+              "value": 16
+            },
+            {
+              "children": [],
+              "name": "资源管理",
+              "value": 17
+            },
+            {
+              "children": [],
+              "name": "参数配置",
+              "value": 18
+            },
+            {
+              "children": [],
+              "name": "告警采样",
+              "value": 19
+            }
+          ],
+          "name": "系统管理",
+          "value": 10
+        },
+        {
+          "children": [],
+          "name": "高级应用服务接口",
+          "value": 11
+        }
+      ],
+      "name": "顶级菜单1",
+      "value": -1
+    }
+  ]
+}

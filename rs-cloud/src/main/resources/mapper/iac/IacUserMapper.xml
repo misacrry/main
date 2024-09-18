@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ruishan.iac.mapper.IacUserMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="relSelect">
+        SELECT a.*, b.*
+        FROM iac_user a
+        LEFT JOIN base_user b ON a.user_id = b.id
+        <where>
+            <if test="page != null and page.pageData != null">
+                <if test="page.pageData.userId != null">
+                    AND a.user_id = #{page.pageData.userId}
+                </if>
+                <if test="page.pageData.username != null">
+                    AND b.username LIKE CONCAT('%', #{page.pageData.username}, '%')
+                </if>
+                <if test="page.pageData.loginname != null">
+                    AND b.loginname = #{page.pageData.loginname}
+                </if>
+                <if test="page.pageData.status != null">
+                    AND b.status = #{page.pageData.status}
+                </if>
+                <if test="page.pageData.createTimeStart != null">
+                    AND b.create_time &gt;= #{page.pageData.createTimeStart}
+                </if>
+                <if test="page.pageData.createTimeEnd != null">
+                    AND b.create_time &lt;= #{page.pageData.createTimeEnd}
+                </if>
+                <if test="page.pageData.deleted != null">
+                    AND b.deleted = #{page.pageData.deleted}
+                </if>
+                <if test="page.pageData.deleted == null">
+                    AND b.deleted = 0
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="listPage" resultType="cn.ruishan.iac.entity.IacUser">
+        <include refid="relSelect"></include>
+    </select>
+
+
+</mapper>

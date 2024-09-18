@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="assets/libs/layui/css/layui.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="assets/css/header.css" type="text/css">
+<body>
+<div id="header"></div>
+<div id="main-body">
+    <div class="layui-tab layui-tab-brief">
+        <ul id="strategyTab" class="layui-tab-title" style=" ">
+            <li value="1">1月</li>
+            <li value="2">2月</li>
+            <li value="3">3月</li>
+            <li value="4">4月</li>
+            <li value="5">5月</li>
+            <li value="6">6月</li>
+            <li value="7">7月</li>
+            <li value="8">8月</li>
+            <li value="9">9月</li>
+            <li  value="10">10月</li>
+            <li  value="11">11月</li>
+            <li  value="12">12月</li>
+        </ul>
+        <div id="bms-content"></div>
+        <div id="tablesContainer"></div>
+        <div id="main-table"></div>
+    </div>
+</div>
+
+<script src="assets/libs/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.js" type="text/javascript"></script>
+<script src="assets/libs/layui/layui.js" type="text/javascript"></script>
+<script src="assets/js/main.js" type="text/javascript"></script>
+<script src="assets/js/header.js" type="text/javascript"></script>
+<script type="text/html" id="main-table-tools">
+    <div class="layui-btn-container">
+        <button class="layui-btn" lay-event="edit" id="edit-btn">进入编辑</button>
+        <button class="layui-btn layui-btn-disabled" lay-event="save" id="save-btn">保存设置</button>
+    </div>
+</script>
+<script>
+    var table;
+    var token;
+    layui.use(['form', 'dropdown', 'admin', 'setter', 'laydate'], function () {
+        var $ = layui.$;
+        var dropdown = layui.dropdown;
+        var admin = layui.admin;
+        var laydate = layui.laydate;
+        var setter = layui.setter;
+        table = layui.table;
+        token = admin.getToken().access_token;
+
+        var subId = 1;
+        var gcPointData = [];
+        var dropdownArr = [];
+        admin.req('iac/substation/runningStatus', function (response) {
+            if (response.data.code === 500) {
+                console.log("跳转")
+                window.location.href = "login.html";
+            }
+            var subData = response.data;
+            var subCounts = subData.length;
+            if (subCounts >= 1) {
+                for (var i = 1; i <= subCounts; i++) {
+                    dropdownArr.push({title: "储能站" + subData[i - 1].id, id: subData[i - 1].id});
+                }
+            }
+            if (subCounts === 1) {
+                console.log("隐藏")
+                $('#change-sub').hide();
+            } else {
+                $('#change-sub').show();
+            }
+        })
+
+
+        generateHeader();
+        $('#current-day').html(currentDay);
+        updateTime();
+        dropdown.render({
+            elem: '#setting',
+            data: [
+                {title: "定时充放电", id: 1},
+                {title: "计划曲线", id: 2},
+                {title: "后台管理", id: 3},
+            ],
+            click: function (obj) {
+                if (obj.id === 1) {
+                    window.location.href = "/scheduledChDi.html";
+                } else if (obj.id === 2) {
+                    window.location.href = "/plannedCurve.html";
+                } else if (obj.id === 3) {
+                    window.location.href = "/backManage.html";
+                }
+            }
+        })
+        dropdown.render({
+            elem: '#change-sub',
+            data: dropdownArr,
+            click: function (obj) {
+                this.elem.val(obj.title);
+                this.elem.find('span').text(obj.title);
+                console.log(obj)
+                subId = obj.id;
+                init();
+            }
+        })
+        dropdown.render({
+            elem: '#user-action',
+            data: [
+                {title: '修改密码', id: 99},
+                {title: '退出登录', id: 100},
+            ],
+            click: function (obj) {
+                // this.elem.find('span').text(obj.title);
+                if (obj.id === 99) {
+                    changePswd();
+                } else if (obj.id === 100) {
+                    logout();
+                }
+            }
+        })
+
+        init();
+
+        function init() {
+            var tabs = document.querySelectorAll('.layui-tab-title li');
+            var today = new Date();
+            var currentMonth = today.getMonth() + 1;
+            tabs.forEach(function(tab, index) {
+                if (tab.value === currentMonth) {
+                    tab.classList.add('layui-this');
+                } else {
+                    tab.classList.remove('layui-this');
+                }
+            });
+            admin.req("iac/strategyChargeDisCharge/listByMonth", {substationId: subId, month: currentMonth}, function (response) {
+                generateTable(response.data);
+            })
+        }
+
+
+
+        table.on('toolbar(main-table)', function (obj) {
+            var data = obj.config.data;
+            var event = obj.event;
+            console.log(data)
+            if (event === 'edit') {
+                $('#edit-btn').addClass("layui-btn-disabled");
+                $('#save-btn').removeClass("layui-btn-disabled");
+                $("tr[data-index='" + 0 + "']").find("input[type='checkbox']").prop("disabled", false);
+                for (let i = 0; i < data.length; i++) {
+                    var index = i;
+                    // 取消禁用
+                    $("tr[data-index='" + index + "']").find("input[type='checkbox']").prop("disabled", false);
+                    $("tr[data-index='" + index + "']").find("input[type='text']").prop("disabled", false);
+                    $("tr[data-index='" + index + "']").find(".start-time, .end-time").prop("disabled", false);
+
+                    // 添加hover
+                    $("tr[data-index='" + index + "']").find("input[type='text']").addClass("input-hover");
+                    $("tr[data-index='" + index + "']").find(".start-time, .end-time").addClass("input-hover");
+                }
+            } else if (event === 'save') {
+                // 遍历所有行，获取每行的属性和值
+                var updatedData = [];
+                for (let i = 0; i < data.length; i++) {
+                    var index = i;
+                    $('#edit-btn').removeClass("layui-btn-disabled");
+                    $('#save-btn').addClass("layui-btn-disabled");
+
+                    // 设置禁用
+                    $("tr[data-index='" + index + "']").find("input[type='checkbox']").prop("disabled", true);
+                    $("tr[data-index='" + index + "']").find("input[type='text']").prop("disabled", true);
+                    $("tr[data-index='" + index + "']").find(".start-time, .end-time").prop("disabled", true);
+
+                    // 去掉hover
+                    $("tr[data-index='" + index + "']").find("input[type='text']").removeClass("input-hover");
+                    $("tr[data-index='" + index + "']").find(".start-time, .end-time").removeClass("input-hover");
+
+                    var isChecked = $("tr[data-index='" + index + "']").find("input[type='checkbox']").prop("checked");
+                    var inputValue = $("tr[data-index='" + index + "']").find(".power-value").val();
+                    var startTime = $("tr[data-index='" + index + "']").find(".start-time").val();
+                    var endTime = $("tr[data-index='" + index + "']").find(".end-time").val();
+
+
+                    console.log("start: "+startTime, "end: "+endTime, "value: "+inputValue)
+
+
+                    var rowData = {
+                        id: data[i].id,
+                        substationId: data[i].substationId,
+                        month: data[i].month,
+                        enable: isChecked, // 复选框状态
+                        start: startTime,
+                        end: endTime,
+                        charge: data[i].charge,
+                        value: inputValue, // 更新后的值
+                    };
+
+                    updatedData.push(rowData);
+                }
+                console.log("保存后的数据：", updatedData);
+
+                admin.req("iac/strategyChargeDisCharge/update", JSON.stringify(updatedData), function (response) {
+                    console.log(response)
+                }, 'POST', {contentType: 'application/json;charset=UTF-8' })
+
+            }
+        });
+
+        $('#strategyTab li').on('click', function () {
+            var month = $(this).attr('value');
+            admin.req("iac/strategyChargeDisCharge/listByMonth", {substationId: subId, month: month}, function (response) {
+                generateTable(response.data);
+            }, 'GET')
+        })
+
+
+        function generateTable(monthData) {
+
+            const trueItems = monthData.filter(item => item.charge);
+            const falseItems = monthData.filter(item => !item.charge);
+            const result = [];
+            const maxLength = Math.max(trueItems.length, falseItems.length);
+
+            for (let i = 0; i < maxLength; i++) {
+                if (i < trueItems.length) {
+                    result.push(trueItems[i]);
+                }
+                if (i < falseItems.length) {
+                    result.push(falseItems[i]);
+                }
+            }
+
+            table.render({
+                elem: '#main-table',
+                page: false,
+                toolbar: '#main-table-tools',
+                cols: [[
+                    {type: "checkbox", fixed: "left", width: 50, disabled: true},
+                    {field: "id", title: "ID",hide: true, width: 100},
+                    {field: "subStationId", hide: true},
+                    {field: "start", title: "开始时间", width: 150,
+                        templet: function (d) {
+                            return '<input type="text" class="layui-input start-time" value="' + d.start + '" disabled />';
+                        }
+                    },
+                    {field: "end", title: "结束时间", width: 150,
+                        templet: function (d) {
+                            return '<input type="text" class="layui-input end-time" value="' + d.end + '" disabled />';
+                        }
+                    },
+                    {field: "charge", title: "方式", width: 150,
+                        templet: function (d) {
+                            if (d.charge) {
+                                return "<div style='color: green'>充电</div>";
+                            } else {
+                                return "<div style='color: red'>放电</div>";
+                            }
+                        }
+                    },
+                    {
+                        field: "value",
+                        title: "充放电总功率值",
+                        width: 150,
+                        templet: function(d) {
+                            if (d.charge) {
+                                return '<input type="text" class="layui-input power-value" style="color: green; background-color: transparent !important; border: none" value="' + d.value + '" class="layui-input" disabled />';
+                            } else {
+                                return '<input type="text" class="layui-input power-value" style="color: red; background-color: transparent !important; border: none" value="' + d.value + '" class="layui-input" disabled />';
+                            }
+                        }
+                    },
+                    {field: "month", title: "月份", width: 100},
+                ]],
+                data: result,
+                done: function (res, curr, count) {
+                    var tableData = res.data;
+                    $("tr[data-index='" + 0 + "']").find("input[type='checkbox']").prop("disabled", true);
+                    tableData.forEach(function (row, index) {
+                        $("tr[data-index='" + index + "']").find("input[type='checkbox']").prop("disabled", true);
+                        if (row.enable) {
+                            $("tr[data-index='" + index + "']").find("input[type='checkbox']").prop("checked", true);
+                            $("tr[data-index='" + index + "']").addClass('layui-table-checked');
+                        }
+
+                        // 初始化 laydate 时间选择器
+                        laydate.render({
+                            elem: "tr[data-index='" + index + "'] .start-time",
+                            type: 'time',
+                            trigger: 'click',
+                            done: function (value, date, endDate) {
+                                tableData[index].start = value;
+                            }
+                        });
+
+                        laydate.render({
+                            elem: "tr[data-index='" + index + "'] .end-time",
+                            type: 'time',
+                            trigger: 'click',
+                            done: function (value, date, endDate) {
+                                tableData[index].end = value;
+                            }
+                        });
+
+                    });
+                    // mergeOperationFiled("main-table", 7, 4);
+                }
+            })
+
+        }
+
+
+    })
+
+    function generateTabTitle (strategyData) {
+        console.log(strategyData);
+        $('#strategyTab').empty();
+        for (let i = 0; i < strategyData.length; i++) {
+            $('#strategyTab').append('<li onclick="changePoint('+strategyData[i].id+')" value="'+strategyData[i].id+'">'+strategyData[i].month+"月"+'</li>')
+        }
+    }
+
+    function mergeOperationFiled(tableId, fieldName, mergeStartRow) {
+        var $trs = $('#' + tableId).next('.layui-table-view').find('.layui-table-body table tbody tr');
+        var rowspan = 1;  // 行合并计数
+
+        $trs.each(function (i, tr) {
+            var $currentCell = $(tr).find("td[data-field='"+fieldName+"']");
+            if (i >= mergeStartRow) {
+                // 计算rowspan
+                if (i !== mergeStartRow) {
+                    $currentCell.remove();
+                } else {
+                    $currentCell.attr('rowspan', rowspan);
+                }
+            }
+        })
+    }
+
+
+</script>
+</body>
+<style>
+    body {
+        background-color: #f2f8ff;
+    }
+
+    #main-body {
+        margin: 20px;
+        padding: 15px;
+        background-color: #FFFFFF;
+        border: solid transparent 1px;
+        border-radius: 15px;
+    }
+
+    .layui-table-checked {
+        background-color: transparent;
+    }
+
+    .start-time, .end-time {
+        background-color: transparent !important;
+        border: none;
+    }
+
+    .input-hover:hover {
+        cursor: pointer;
+    }
+
+    #strategyTab {
+        margin-bottom: 20px;
+    }
+
+
+</style>
+</html>

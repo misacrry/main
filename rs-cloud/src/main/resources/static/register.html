@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="layui/css/layui.css" rel="stylesheet">
+<body>
+
+<input placeholder="用户名" id="usr">
+<input placeholder="密码" id="psd">
+<button id="register">注册</button>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/axios.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+  layui.use(function () {
+    var $ = layui.$;
+
+    $('#register').on('click', function () {
+      var usr = document.getElementById("usr").value;
+      var psd = document.getElementById("psd").value;
+      var user = {
+          phone: usr,
+          password: psd
+      }
+      const token = localStorage.getItem('Authorization');
+      axios.post('/sys/register',user, {
+      })
+
+    })
+
+  })
+</script>
+</html>

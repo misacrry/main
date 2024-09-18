@@ -1,0 +1,11 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 4,
+  "data": [
+    {"id":1, "model":"模型1", "name":"日常安全巡检", "status": 0, "planTime": "2021-04-01 08:00:00", "startTime": "2021-04-01 07:58:20", "person": "郭怀银", "number1": 0, "number2": 3},
+    {"id":2, "model":"模型2", "name":"重点巡检", "status": 3, "planTime": "2021-03-16 10:00:00", "startTime": "2021-03-16 10:00:20", "person": "郭怀银", "number1": 0, "number2": 0},
+    {"id":3, "model":"模型3", "name":"安全巡检", "status": 3, "planTime": "2021-03-29 14:00:00", "startTime": "2021-03-29 13:50:20", "person": "杨豫", "number1": 0, "number2": 0},
+    {"id":4, "model":"模型4", "name":"日常安全巡检", "status": 3, "planTime": "2021-03-27 08:00:00", "startTime": "2021-03-27 08:05:17", "person": "郭怀银", "number1": 0, "number2": 0}
+  ]
+}

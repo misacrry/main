@@ -1,0 +1,10 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 3,
+  "data": [
+    { "name":0, "value": "XX-"},
+    { "name":1, "value": "yyyyMMdd"},
+    { "name":2, "value": "000"}
+  ]
+}

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<link href="assets/libs/layui/css/layui.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="assets/css/header.css" type="text/css">
+<body>
+
+<div id="header"></div>
+<div class="layui-tab layui-tab-brief">
+    <ul id="gcPointTab" class="layui-tab-title" style="margin-left: 10%;">
+    </ul>
+    <div id="pcs-content"></div>
+    <div id="tablesContainer"></div>
+</div>
+<div id="main-body"></div>
+</body>
+<script src="assets/libs/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.js" type="text/javascript"></script>
+<script src="assets/libs/layui/layui.js" type="text/javascript"></script>
+<script src="assets/js/main.js" type="text/javascript"></script>
+<script src="assets/js/header.js" type="text/javascript"></script>
+<script>
+    var table;
+    var token;
+    layui.use(['form', 'dropdown', 'admin', 'setter'], function () {
+        var $ = layui.$;
+        var dropdown = layui.dropdown;
+        var admin = layui.admin;
+        var setter = layui.setter;
+        table = layui.table;
+        token = admin.getToken().access_token;
+
+        var subId = 1;
+        var gcPointData = [];
+        getPoint(subId);
+
+        var dropdownArr = [];
+
+        admin.req('iac/substation/runningStatus', function (response) {
+            if (response.data.code === 500) {
+                console.log("跳转")
+                window.location.href = "login.html";
+            }
+            var subData = response.data;
+            var subCounts = subData.length;
+            if (subCounts >= 1) {
+                for (var i = 1; i <= subCounts; i++) {
+                    dropdownArr.push({title: "储能站" + subData[i - 1].id, id: subData[i - 1].id});
+                }
+            }
+            if (subCounts === 1) {
+                console.log("隐藏")
+                $('#change-sub').hide();
+            } else {
+                $('#change-sub').show();
+            }
+        })
+
+
+        generateHeader();
+        $('#current-day').html(currentDay);
+        updateTime();
+        dropdown.render({
+            elem: '#setting',
+            data: [
+                {title: "定时充放电", id: 1},
+                {title: "计划曲线", id: 2},
+                {title: "后台管理", id: 3},
+            ],
+            click: function (obj) {
+                if (obj.id === 1) {
+                    window.location.href = "/scheduledChDi.html";
+                } else if (obj.id === 2) {
+                    window.location.href = "/plannedCurve.html";
+                } else if (obj.id === 3) {
+                    window.location.href = "/backManage.html";
+                }
+            }
+        })
+
+        dropdown.render({
+            elem: '#change-sub',
+            data: dropdownArr,
+            click: function (obj) {
+                this.elem.val(obj.title);
+                this.elem.find('span').text(obj.title);
+                getPoint(obj.id)
+            }
+        })
+
+        dropdown.render({
+            elem: '#user-action',
+            data: [
+                {title: '修改密码', id: 99},
+                {title: '退出登录', id: 100},
+            ],
+            click: function (obj) {
+                // this.elem.find('span').text(obj.title);
+                if (obj.id === 99) {
+                    changePswd();
+                } else if (obj.id === 100) {
+                    logout();
+                }
+            }
+        })
+
+
+        // 生成并网点tab页
+        function generateTabTitle(gcPointData) {
+            console.log(gcPointData)
+            if (gcPointData.length === 0) {
+                console.log("empty")
+                $('#pcs-content').empty();
+            }
+            $('#gcPointTab').empty();
+            for (let i = 1; i <= gcPointData.length; i++) {
+                if (i===1){
+                    $("#gcPointTab").append('<li class="layui-this" onclick="changePoint('+gcPointData[i-1].id+')" value='+gcPointData[i-1].id+'>'+"并网点"+i+'</li>');
+                } else {
+                    $("#gcPointTab").append('<li onclick="changePoint('+gcPointData[i-1].id+')" value='+gcPointData[i-1].id+'>'+"并网点"+i+'</li>');
+                }
+            }
+            if (gcPointData.length !== 0) {
+                changePoint(gcPointData[0].id);
+            }
+        }
+
+        // 根据储能站查并网点
+        function getPoint(subId) {
+            admin.req('iac/gcPoint/selectListBySubId', {subId: subId}, function (response) {
+                console.log(response)
+                if(response.data.length !== 0) {
+                    gcPointData = response.data;
+                    generateTabTitle(gcPointData);
+                } else {
+                    $('#gcPointTab').empty();
+                    $('#pcs-content').empty();
+                }
+                var pointArr = [];
+                for (let i = 0; i < response.data.length; i++) {
+                    pointArr.push(response.data[i].id);
+                }
+            })
+        }
+
+    })
+
+    // 切换并网点tab
+    function changePoint(pointId) {
+        admin.req('iac/pcs/selectPcsListByPointId', {pointId: pointId}, function (response) {
+            generatePcsTable(response.data);
+        })
+    }
+
+
+    var yxArr = [
+        {isLock: 1, manLock: 0, communicationFault: 0, totAlarm: 0, totFault: 0,
+        charForbidden: 0, discForbidden: 0, smartLock: 1, controlLock: 0}
+    ]
+
+    // 生成pcs表格
+    function generatePcsTable(pcsData) {
+        $('#pcs-content').empty();
+        for (let i = 0; i < pcsData.length; i++) {
+            var pcsId = "pcs-table-" + i;
+            var testId = pcsId+2;
+            $('#pcs-content').append('<di class="pcs-container" id="'+"pcs-container-"+i+'"></div>');
+            $('#pcs-container-'+i).append(`<div class="pcs-title">${i+1}#PCS</div>`);
+            $('#pcs-container-'+i).append('<di class="pcs-table-container" id="'+pcsId+1+'"></div>');
+            // $('#'+pcsId+1).append('<div id="'+pcsId+'"></div>');
+            // $('#'+pcsId+1).append('<div id="'+testId+'"></div>');
+            $('#'+pcsId+1).append('<div id="'+'pcs-table-part1-'+i+'"></div>');
+            $('#'+pcsId+1).append('<div id="'+'pcs-table-part2-'+i+'"></div>');
+            $('#'+pcsId+1).append('<div id="'+'pcs-table-part3-'+i+'"></div>');
+            $('#'+pcsId+1).append('<div id="'+'pcs-table-part4-'+i+'"></div>');
+
+            table.render({
+                elem: '#pcs-table-part1-'+i,
+                verticalDisplay: true,
+                width: '50%',
+                page: false,
+                cols: [[
+                    {field:'activePower', title:'有功实时值(KW)', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'reactivePower', title:'无功实时值(KVar)', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'powerFactor', title:'功率因数实时值', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'ableMaxTotCh', title:'最大可充电功率(KW)', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'ableMaxTotDi', title:'最大可放电功率(KW)', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                ]],
+                data: [pcsData[i]]
+            })
+
+            table.render({
+                elem: '#pcs-table-part2-'+i,
+                verticalDisplay: true,
+                page: false,
+                width: '50%',
+                cols: [[
+                    {field:'accumulatedChargeCap', title:'累计充电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'accumulatedDischargeCap', title:'累计放电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'charCapDay', title:'日充电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'discCapDay', title:'日放电量', width: 80, templet:  '<div style="text-align: right; color: #5386ff;">{{d.charCapDay}}</div>'},
+                    {field:'runStatus', title:'运行状态', width: 80,
+                        templet: function (d) {
+                            if(d.runStatus === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.runStatus === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                ]],
+                data: [pcsData[i]]
+            })
+
+            table.render({
+                elem: '#pcs-table-part3-'+i,
+                verticalDisplay: true,
+                page: false,
+                width: '50%',
+                cols: [[
+                    {field:'isLock', title:'闭锁', width: 100,
+                        templet: function (d) {
+                            if(d.isLock === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                                // return '<img class="yx-icon" src="icon/circle-red.png">'
+                            } else if (d.isLock === 0) {
+                                return '<div class="normal-status">正常</div>'
+                                // return '<img class="yx-icon" src="icon/circle-green.png">'
+                            } else {
+                                console.log(d.isLock)
+                            }
+                        }
+                    },
+                    {field:'manLock', title:'人工闭锁', width: 100,
+                        templet: function (d) {
+                            if(d.manLock === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.manLock === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'communicationFault', title:'通信异常', width: 100,
+                        templet: function (d) {
+                            if(d.communicationFault === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.communicationFault === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'totAlarm', title:'告警总', width: 100,
+                        templet: function (d) {
+                            if(d.totAlarm === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.totAlarm === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'totFault', title:'故障总', width: 100,
+                        templet: function (d) {
+                            if(d.isLock === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.isLock === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                ]],
+                data: yxArr
+            })
+
+            table.render({
+                elem: '#pcs-table-part4-'+i,
+                verticalDisplay: true,
+                page: false,
+                width: '50%',
+                cols: [[
+                    {field:'charForbidden', title:'禁止充电', width: 100,
+                        templet: function (d) {
+                            if(d.charForbidden === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.charForbidden === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'discForbidden', title:'禁止放电', width: 100,
+                        templet: function (d) {
+                            if(d.discForbidden === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.discForbidden === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'smartLock', title:'智能诊断故障闭锁', width: 100,
+                        templet: function (d) {
+                            if(d.smartLock === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.smartLock === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                    {field:'controlLock', title:'辅控闭锁', width: 100,
+                        templet: function (d) {
+                            if(d.controlLock === 1) {
+                                return '<div class="alarm-status">异常</div>'
+                            } else if (d.controlLock === 0) {
+                                return '<div class="normal-status">正常</div>'
+                            } else {
+
+                            }
+                        }
+                    },
+                ]],
+                data: yxArr
+            })
+        }
+    }
+
+
+
+</script>
+<style>
+    body {
+        background-color: #f2f8ff;
+    }
+
+    #pcs-content {
+        margin-top: 30px;
+    }
+    .pcs-table {
+        width: calc(50% - 20px);
+        margin: 10px;
+        background-color: skyblue;
+    }
+    .center-table {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .pcs-container{
+        display: block;
+        background-color: #ffffff;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        padding: 30px;
+    }
+    .layui-table-view {
+        width: auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .layui-table-cell {
+        width: auto;
+        min-width: 100px;
+    }
+    .pcs-table-container {
+        /*width: 50%;*/
+        display: flex;
+    }
+    .pcs-title {
+        width: 50%;
+        margin-bottom: 20px;
+        color: #333333;
+        height: 60px;
+        line-height: 60px;
+        font-size: 26px;
+        margin-left: 50px;
+    }
+    .yx-icon {
+        width: 20px;
+        height: 20px;
+    }
+    .run-status-box {
+        width: 80%;
+        height: 20%;
+        text-align: center;
+        line-height: 20%;
+        color: #F2F2F2;
+        font-size: 20px;
+    }
+
+    .normal-status {
+        text-align: center;
+        color: green;
+    }
+
+    .alarm-status {
+        text-align: center;
+        color: red;
+    }
+
+</style>
+</html>

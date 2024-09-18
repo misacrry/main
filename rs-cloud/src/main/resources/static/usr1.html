@@ -1,0 +1,202 @@
+<style>
+    .layui-badge-rim + .layui-badge-rim {
+        margin-left: 5px;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格顶部工具栏 -->
+            <div class="layui-form toolbar">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label w-auto">用户名：</label>
+                        <div class="layui-input-inline mr0">
+                            <input name="username" class="layui-input" type="text" placeholder="输入用户名"
+                                   autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn icon-btn" lay-filter="searchSubmitIotUsr" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                        <button id="iotUsrBtnAdd" perm-show="post:iot/usr" class="layui-btn icon-btn"><i
+                                class="layui-icon">&#xe654;</i>添加
+                        </button>
+                        <button class="layui-btn icon-btn" tb-export="iotUsrTable"><i
+                                class="layui-icon layui-icon-export"></i>导出
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="layui-table" id="iotUsrTable" lay-filter="iotUsrTable"></table>
+        </div>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="iotUsrTableBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" perm-show="put:iot/usr" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" perm-show="delete:iot/usr/{usrId}" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" perm-show="put:iot/usr" lay-event="unbind">解绑微信</a>
+</script>
+<!-- 表单弹窗 -->
+<script type="text/html" id="modelUsr">
+    <div class="model-form">
+        <input name="usrId" type="hidden"/>
+        <input name="projId" type="hidden"/>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">用户名称</label>
+            <div class="layui-input-block">
+                <input name="username" placeholder="请输入用户名称" type="text" class="layui-input"
+                       maxlength="150" lay-verType="tips" lay-verify="required"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">账号</label>
+            <div class="layui-input-block">
+                <input name="loginname" placeholder="请输入账号" type="text" class="layui-input"
+                       maxlength="100" lay-verType="tips" lay-verify="required"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">登录密码</label>
+            <div class="layui-input-block">
+                <input id="password" name="password" placeholder="请输入密码" type="password" class="layui-input"
+                       maxlength="100" lay-verType="tips" lay-verify="required|pwd"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">确认密码</label>
+            <div class="layui-input-block">
+                <input id="confirmPwd" placeholder="请再次输入密码" type="password" class="layui-input"
+                       maxlength="100" lay-verType="tips" lay-verify="equalTo" lay-equalTo="#password"/>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- js部分 -->
+<script>
+    layui.use(['layer', 'form', 'formX', 'table', 'admin', 'tableX'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var formX = layui.formX;
+        var table = layui.table;
+        var admin = layui.admin;
+        var tableX = layui.tableX;
+
+        var where = {}, projId = admin.getProj();
+        if (projId) {
+            where = {projId: projId};
+        }
+
+        // 渲染表格
+        var insTb = tableX.render({
+            elem: '#iotUsrTable',
+            url: 'iot/usr',
+            where: where,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'username', title: '用户名', sort: true},
+                {field: 'loginname', title: '账号', sort: true},
+                {field: 'createTime', title: '创建时间', align: 'center', width: 170},
+                {field: 'updateTime', title: '修改时间', align: 'center', width: 170},
+                {
+                    templet: function (d) {
+                        if (d.online) {
+                            return '<span class="layui-badge layui-bg-blue">在线</span>'
+                        } else {
+                            return '<span class="layui-badge layui-bg-cyan">离线</span>'
+                        }
+                    }, title: '状态', unresize: true, width: 100, align: 'center'
+                },
+                {align: 'center', toolbar: '#iotUsrTableBar', title: '操作', unresize: true, width: 200}
+            ]],
+            // 数据渲染完的回调
+            done: function (res, curr, count) {
+                // 渲染导出按钮
+                tableX.renderExport(insTb);
+
+                // 移除没有权限的元素
+                admin.renderPerm();
+            }
+        });
+
+        // 搜索
+        form.on('submit(searchSubmitIotUsr)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+        });
+
+        // 添加按钮点击事件
+        $('#iotUsrBtnAdd').on('click', function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(iotUsrTable)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') { // 删除
+                admin.del({
+                    message: '确定删除此用户吗？',
+                    url: 'iot/usr/' + obj.data.usrId,
+                    obj: obj
+                });
+            } else if (layEvent === 'edit') { // 修改
+                showEditModel(data);
+            } else if (layEvent === 'unbind') { //解绑微信
+                admin.del({
+                    message: '确定解绑微信吗？',
+                    url: "iot/usr/unbind",
+                    data:{usrId: obj.data.usrId},
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        function showEditModel(data) {
+            admin.open({
+                type: 1,
+                title: data ? '修改用户' : '添加用户',
+                content: $('#modelUsr').html(),
+                btn: ['保存', '取消'],
+                yes: function(index, layero) {
+                    // 表单提交事件
+                    admin.formSubmit({
+                        btnFilter: 'iotUsrFormSubmit',
+                        url: 'iot/usr',
+                        data: data,
+                        success: function () {
+                            insTb.reload({page: {curr: 1}});
+                        }
+                    });
+                },
+                cancel: function(index, layero) {},
+                success: function (layero, index) {
+
+                    admin.modelForm(layero, 'iotUsrFormSubmit', 'iotUsrForm', {
+                        inputStyle: {'width': '200px'}
+                    });
+
+                    // 给projId赋值
+                    form.val('iotUsrForm', {projId: projId});
+
+                    // 回显usr数据
+                    if (data) {
+                        data.password = "";
+                        form.val('iotUsrForm', data);
+                        $('#password').removeAttr("lay-verify");
+                        $('#confirmPwd').removeAttr("lay-verify");
+                    }
+                }
+            });
+        }
+    });
+</script>

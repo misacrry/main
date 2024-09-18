@@ -1,0 +1,9 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 2,
+  "data": [
+    {"id":1, "model":"模型1", "name":"观察设备是否有异常", "status": 0},
+    {"id":2, "model":"模型2", "name":"检查设备数值", "status": 1}
+  ]
+}

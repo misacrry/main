@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="assets/libs/layui/css/layui.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="assets/css/header.css" type="text/css">
+<body>
+<div id="header"></div>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body">
+      <!-- 表格顶部工具栏 -->
+      <div class="layui-form toolbar">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label w-auto">搜索：</label>
+            <div class="layui-input-inline mr0">
+              <input name="keyword" class="layui-input" type="text" placeholder="输入关键字" autocomplete="off"/>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn icon-btn" lay-filter="searchSubmitSysResource" lay-submit>
+              <i class="layui-icon">&#xe615;</i>搜索
+            </button>
+            <button id="sysResourceBtnAdd" perm-show="post:sys/resource" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
+          </div>
+          <div class="layui-inline">
+            <button id="sysResourceBtnExpandAll" class="layui-btn icon-btn">全部展开</button>
+            <button id="sysResourceBtnFoldAll" class="layui-btn icon-btn">全部折叠</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="layui-table" id="sysResourceTable" lay-filter="sysResourceTable"></table>
+    </div>
+  </div>
+</div>
+</body>
+
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="sysResourceTableBar">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" perm-show="put:sys/resource" lay-event="edit">修改</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" perm-show="delete:sys/resource/{resourceId}" lay-event="del">删除</a>
+</script>
+<!-- 表单弹窗 -->
+<script type="text/html" id="sysResourceModel">
+  <div class="model-form" autocomplete="off">
+    <input name="resourceId" type="hidden"/>
+    <div class="layui-form-item">
+      <label class="layui-form-label">上级资源</label>
+      <div class="layui-input-block">
+        <div id="selParentIdTree"></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">资源名称</label>
+      <div class="layui-input-block">
+        <input name="name" placeholder="请输入资源名称" type="text" class="layui-input"
+               maxlength="150" lay-verType="tips" lay-verify="required" />
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">资源URL</label>
+      <div class="layui-input-block">
+        <input name="url" placeholder="请输入资源URL" type="text" class="layui-input"
+               maxlength="200"/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">资源图标</label>
+      <div class="layui-input-block">
+        <input name="icon" placeholder="请输入资源图标" type="text" class="layui-input"
+               maxlength="100"/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">对应权限</label>
+      <div class="layui-input-block">
+        <input name="authority" placeholder="请输入对应权限" type="text" class="layui-input"
+               maxlength="100"/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">资源类型</label>
+      <div class="layui-input-block">
+        <input type="radio" name="type" value="0" title="菜单" checked/>
+        <input type="radio" name="type" value="1" title="按钮"/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">排序号</label>
+      <div class="layui-input-block">
+        <input name="sort" placeholder="请输入排序号" type="number" class="layui-input"
+               max="100" lay-verType="tips" lay-verify="required" />
+      </div>
+    </div>
+  </div>
+</script>
+
+<!-- js部分 -->
+<script>
+  layui.use(['layer', 'admin', 'form', 'formX', 'table', 'tableX', 'treeTable'], function () {
+    let $ = layui.jquery,
+            layer = layui.layer,
+            admin = layui.admin,
+            form = layui.form,
+            formX = layui.formX,
+            table = layui.table,
+            tableX = layui.tableX,
+            treeTable = layui.treeTable;
+
+    // 渲染表格
+    var insTb = treeTable.render({
+      elem: '#sysResourceTable',
+      url: admin.getBaseServer() + 'sys/resource',
+      headers: admin.getHeaders(),
+      height: 'full-180',
+      //toolbar: '#toolbarResource',
+      tree: {
+        iconIndex: 2,           // 折叠图标显示在第几列
+        isPidData: true,        // 是否是id、pid形式数据
+        idName: 'resourceId',   // id字段名称
+        pidName: 'parentId'     // pid字段名称
+      },
+      cols: [[
+        {type: 'numbers'},
+        {type: 'radio', width: 50},
+        {field: 'name', title: '资源名称', sort: true, minWidth: 150},
+        {field: 'url', title: '资源URL', sort: true, minWidth: 150},
+        {field: 'authority', title: '权限标识', minWidth: 160},
+        {field: 'sort', title: '排序号', sort: true, width: 60, align: 'center'},
+        {
+          title: '类型', templet: function (d) {
+            let strs = [
+              '<span class="layui-badge layui-badge-green">菜单</span>',
+              '<span class="layui-badge layui-badge-gray">按钮</span>'
+            ];
+            return strs[d.type];
+          }, align: 'center', width: 100
+        },
+        {field: 'createTime', title: '创建时间', align: 'center', minWidth: 110},
+        {field: 'updateTime',title: '修改时间', align: 'center', minWidth: 110},
+        {align: 'center', toolbar: '#sysResourceTableBar', title: '操作', minWidth: 120}
+      ]],
+      // 数据渲染完的回调
+      done: function (res, curr, count) {
+        // 移除没有权限的元素
+        admin.renderPerm();
+        // 展开
+        insTb.expandAll();
+      }
+    });
+
+    // 行点击
+    treeTable.on('row(sysResourceTable)', function(obj) {
+      // 选中
+      insTb.setChecked([obj.data.resourceId])
+    });
+
+    // 添加按钮点击事件
+    $('#sysResourceBtnAdd').on('click', function () {
+      showEditModel();
+    });
+
+    // 全部展开按钮点击事件
+    $('#sysResourceBtnExpandAll').on('click', function () {
+      insTb.expandAll();
+    });
+
+    // 全部折叠按钮点击事件
+    $('#sysResourceBtnFoldAll').on('click', function () {
+      insTb.foldAll();
+    });
+
+    // 搜索
+    form.on('submit(searchSubmitSysResource)', function (data) {
+      insTb.reload({where: data.field});
+    });
+
+    // 工具条点击事件
+    treeTable.on('tool(sysResourceTable)', function (obj) {
+      var data = obj.data;
+      if (obj.event === 'edit') { //修改
+        showEditModel(data);
+      } else if (obj.event === 'del') { // 删除
+        doDelete(obj);
+      }
+    });
+
+    // 删除
+    function doDelete(obj) {
+      admin.del({
+        message: '确定要删除吗？',
+        url: 'sys/resource/' + obj.data.resourceId,
+        obj: obj
+      });
+    }
+
+    // 显示编辑弹窗
+    function showEditModel(data) {
+      admin.open({
+        type: 1,
+        title: (data ? '修改' : '添加') + '资源',
+        content: $('#sysResourceModel').html(),
+        btn: ['保存', '取消'],
+        yes: function(index, layero) {
+          // 表单提交事件
+          admin.formSubmit({
+            btnFilter: 'sysResourceFormSubmit',
+            url: 'sys/resource',
+            data: data,
+            success: function () {
+              insTb.reload({});
+            }
+          });
+        },
+        cancel: function(index, layero) {},
+        success: function (layero) {
+
+          admin.modelForm(layero, 'sysResourceFormSubmit', 'resourceForm');
+
+          admin.select({
+            el: '#selParentIdTree',
+            url: 'sys/resource/selectTree',
+            name: 'parentId',
+            required: true,
+            param: {
+              type: 0,
+              showRoot: true,
+              selectId: data ? data.parentId : null
+            },
+            tree: {
+              // 是否显示树状结构
+              show: true,
+              strict: false,
+              //默认展开节点
+              expandedKeys: [-1],
+            },
+          });
+
+          form.val('resourceForm', data);
+        }
+      });
+    }
+  });
+</script>
+
+</html>

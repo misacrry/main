@@ -1,0 +1,21 @@
+# wasm端口号
+wasm-port = 8080
+# 网关端口号
+gateway-port = 9081
+# 图形网关地址(以半角逗号分隔)
+graph-gateway = 127.0.0.1
+# 是否开启图形权限
+graph-authority = false
+# 图形主页面名称
+graph-home-page = 1配电房主页
+# Wasm名称
+wasm-name = GraphicsWasm
+# Wasm版本
+wasm-ver = 20220510103613
+# Wasm图形版本
+wasm-graph-ver = 20220510103613
+
+# 是否显示大屏
+big-screen = false
+# 大屏页面地址
+big-screen-page = 首页

@@ -1,0 +1,6 @@
+/target/
+
+### IntelliJ IDEA ###
+.idea
+/logs/
+/src/main/resources/static/assets/module/bmap/

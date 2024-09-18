@@ -1,0 +1,15 @@
+## 基本配置信息
+# JDBC URL，根据不同的数据库，使用相应的JDBC连接字符串
+url = jdbc:mysql://192.168.0.190:3306/rs-iot?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false
+# 用户名，此处也可以使用 user 代替
+username = root
+# 密码，此处也可以使用 pass 代替
+password = 123456
+# JDBC驱动名，可选（Hutool会自动识别）
+driver = com.mysql.jdbc.Driver
+
+#sqllite数据库
+# driver=org.sqlite.JDBC
+# url=jdbc:sqlite::resource:data/pi34_master
+# username=
+# password=

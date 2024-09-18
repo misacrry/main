@@ -1,0 +1,11 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 4,
+  "data": [
+    {"id":1,"code":"20201218001", "model":"模型1", "name":"子设备1", "department": 1,"number": 2, "status": 0},
+    {"id":2,"code":"20201218002", "model":"模型2", "name":"子设备2", "department": 2, "status": 1},
+    {"id":3,"code":"20201218003", "model":"模型3", "name":"子设备3", "department": 3, "status": 2},
+    {"id":3,"code":"20201218003", "model":"模型3", "name":"子设备4", "department": 3, "status": 3}
+  ]
+}

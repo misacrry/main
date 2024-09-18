@@ -1,0 +1,225 @@
+.layui-badge-rim + .layui-badge-rim {
+    margin-left: 5px;
+}
+
+.layui-col-md4 {
+    text-align: center;
+}
+
+.s {
+    text-align: center;
+}
+
+.block {
+    height: 60px;
+    width: 130px;
+    margin-left: 70px;
+    padding-top: 10px;
+    /*display: inline-block;*/
+}
+
+.imgBlock {
+    height: 70px;
+    width: 70px;
+    background-size: 50px !important;
+    /*display: inline-block;*/
+}
+
+.backgroundCard {
+    width: 210px;
+    background-color: #304eaa;
+    border: 1px solid #4477dd;
+}
+
+.main {
+    background-color: #223388;
+    padding: 5px;
+    margin: 5px;
+}
+
+.fontStyle {
+    color: #ffffab;
+    font-size: 15px;
+}
+
+.main-box2-1 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList1.png") center no-repeat;
+}
+
+.main-box2-2 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList2.png") center no-repeat;
+}
+
+.main-box2-3 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList3.png") center no-repeat;
+}
+
+.main-box2-4 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList4.png") center no-repeat;
+}
+
+.main-box2-5 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList5.png") center no-repeat;
+}
+
+.main-box2-6 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList6.png") center no-repeat;
+}
+
+.main-box2-7 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList7.png") center no-repeat;
+}
+
+.main-box2-8 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList8.png") center no-repeat;
+}
+
+.main-box2-9 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList9.png") center no-repeat;
+}
+
+.main-box2-10 {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    background: url("../images/runList10.png") center no-repeat;
+}
+
+.main-box4-1 {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background: url("../images/task4.png") center no-repeat;
+    background-size: 100px;
+}
+.pl20-mb20{
+    padding-left: 20px;
+    margin-bottom: 20px
+}
+.pl10-mb20{
+    padding-left: 10px;
+    margin-bottom: 20px
+}
+.box2-1{
+    width: 115px;
+    height: 40px;
+    padding-left: 15px;
+    background-color: #304eaa;
+    border: 1px solid #4477dd;
+}
+.box2-1-1{
+    height: 40px;
+    width: 100px;
+    margin-left: 30px;
+}
+.box2-1-2{
+    padding-top:9px;
+    font-size: 16px;
+    text-align: left
+}
+.box2-2-1{
+    font-size: 20px;
+    color:#8cf1f4;
+    font-weight: bold;
+    line-height: 130px;
+}
+.box2-2-2{
+    font-size: 20px;
+    color: #ffffab;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.box4-1{
+    width: 145px;
+    height: 40px;
+    padding-left: 15px;
+    background-color: #304eaa;
+    border: 1px solid #4477dd;
+}
+.box4-1-1{
+    height: 40px;
+    width: 115px;
+    margin-left: 30px;
+}
+.box4-1-2{
+    padding-top:9px;
+    font-size: 16px;
+    text-align: left;
+}
+.box4-1-3{
+    float: right;
+    font-size: 24px;
+    margin-right: 10px;
+}
+.box5-1{
+    padding-right: 3%;
+    padding-left: 3%;
+}
+.box5-1-1{
+    padding: 5%;
+    background-color: #68b5f0;
+    margin: 3% 3% 0 3%;
+    font-size: 15px;
+    color: #ffffab;
+    border: 1px solid #4477dd;
+}
+.box5-1-2{
+    background-color: #304eaa;
+    margin: 0% 3% 3% 3%;
+    padding: 10%;
+    border: 1px solid #4477dd;
+}
+.pl20{
+    padding-left: 20px;
+}
+.pt40{
+    padding-top: 40px;
+}
+.imgHead{
+    margin-left: 10px;
+    width: 24px;
+    height: 24px;
+}
+.fontHead{
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 18px;
+}
+.pb15{
+    padding-bottom: 15px;
+}
+.fontColor{
+    color: #6cc4ff;
+}
+.btn-select {
+    background: #2e6bb5 !important;
+    border: 1px solid #41c0f9 !important;
+}

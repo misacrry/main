@@ -1,0 +1,69 @@
+[{
+  "id": 1,
+  "name": "项目1",
+  "open": true,
+  "children": [{
+    "id": 2,
+    "name": "变电站1",
+    "open": false,
+    "checked": true
+  }, {
+    "id": 3,
+    "name": "变电站2",
+    "open": false,
+    "checked": true
+  }, {
+    "id": 17,
+    "name": "变电站3",
+    "open": false,
+    "checked": true
+  }],
+  "checked": true
+}, {
+  "id": 4,
+  "name": "项目2",
+  "open": false,
+  "children": [{
+    "id": 5,
+    "name": "变电站4",
+    "open": false,
+    "checked": false
+  }, {
+    "id": 6,
+    "name": "变电站5",
+    "open": false,
+    "checked": false
+  }, {
+    "id": 333,
+    "name": "变电站6",
+    "open": false,
+    "checked": false
+  }],
+  "checked": false
+}, {
+  "id": 10,
+  "name": "项目3",
+  "open": false,
+  "children": [{
+    "id": 8,
+    "name": "变电站7",
+    "open": false,
+    "checked": false
+  }, {
+    "id": 11,
+    "name": "变电站8",
+    "open": false,
+    "checked": false
+  }, {
+    "id": 13,
+    "name": "变电站9",
+    "open": false,
+    "checked": false
+  }, {
+    "id": 15,
+    "name": "变电站10",
+    "open": false,
+    "checked": false
+  }],
+  "checked": false
+}]

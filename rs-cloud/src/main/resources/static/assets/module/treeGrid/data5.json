@@ -1,0 +1,10 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 3,
+  "data": [
+    {"operationTime":"2018-4-13", "name":"小A", "operation":"添加", "operationResult": "添加新故障"},
+    {"operationTime":"2020-12-20", "name":"小B", "operation":"审核", "operationResult": "立即维修,继续审核"},
+    {"operationTime":"2020-12-22", "name":"小C", "operation":"审核", "operationResult": "立即维修,结束审核"}
+  ]
+}

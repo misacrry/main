@@ -1,0 +1,22 @@
+.page-button {
+    background-color: #e2e2e2;
+    margin: 0 10px;
+}
+
+#title {
+    margin-left: 10px;
+    letter-spacing: 6px;
+    text-align: right;
+    vertical-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.is-choose {
+    color: #F2F2F2 !important;
+    background-color: #4080ff !important;
+}
+
+.is-choose:hover {
+    color: #F2F2F2;
+}

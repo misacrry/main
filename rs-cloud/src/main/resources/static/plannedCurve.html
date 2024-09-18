@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="assets/libs/layui/css/layui.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="assets/css/header.css" type="text/css">
+<body>
+<div id="header"></div>
+<div class="layui-tab layui-tab-brief">
+    <ul id="gcPointTab" class="layui-tab-title" style="text-align: center">
+    </ul>
+    <div id="main-table"></div>
+    <div id="bms-content"></div>
+    <div id="tablesContainer"></div>
+</div>
+<div id="main-body"></div>
+</body>
+<script src="assets/libs/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.min.js" type="text/javascript"></script>
+<script src="assets/js/axios.js" type="text/javascript"></script>
+<script src="assets/libs/layui/layui.js" type="text/javascript"></script>
+<script src="assets/js/main.js" type="text/javascript"></script>
+<script src="assets/js/header.js" type="text/javascript"></script>
+<script>
+    var table;
+    var token;
+    layui.use(['form', 'dropdown', 'admin', 'setter'], function () {
+        var $ = layui.$;
+        var dropdown = layui.dropdown;
+        var admin = layui.admin;
+        var setter = layui.setter;
+        table = layui.table;
+        token = admin.getToken().access_token;
+
+        var subId = 1;
+        var gcPointData = [];
+        var dropdownArr = [];
+
+        admin.req('iac/substation/runningStatus', function (response) {
+            if (response.data.code === 500) {
+                console.log("跳转")
+                window.location.href = "login.html";
+            }
+            var subData = response.data;
+            var subCounts = subData.length;
+            if (subCounts >= 1) {
+                for (var i = 1; i <= subCounts; i++) {
+                    dropdownArr.push({title: "储能站" + subData[i - 1].id, id: subData[i - 1].id});
+                }
+            }
+            if (subCounts === 1) {
+                console.log("隐藏")
+                $('#change-sub').hide();
+            } else {
+                $('#change-sub').show();
+            }
+        })
+
+
+        generateHeader();
+        $('#current-day').html(currentDay);
+        updateTime();
+        dropdown.render({
+            elem: '#setting',
+            data: [
+                {title: "定时充放电", id: 1},
+                {title: "计划曲线", id: 2},
+                {title: "后台管理", id: 3},
+            ],
+            click: function (obj) {
+                if (obj.id === 1) {
+                    window.location.href = "/scheduledChDi.html";
+                } else if (obj.id === 2) {
+                    window.location.href = "/plannedCurve.html";
+                } else if (obj.id === 3) {
+                    window.location.href = "/backManage.html";
+                }
+            }
+        })
+        dropdown.render({
+            elem: '#change-sub',
+            data: dropdownArr,
+            click: function (obj) {
+                this.elem.val(obj.title);
+                this.elem.find('span').text(obj.title);
+
+            }
+        })
+        dropdown.render({
+            elem: '#user-action',
+            data: [
+                {title: '修改密码', id: 99},
+                {title: '退出登录', id: 100},
+            ],
+            click: function (obj) {
+                // this.elem.find('span').text(obj.title);
+                if (obj.id === 99) {
+                    changePswd();
+                } else if (obj.id === 100) {
+                    logout();
+                }
+            }
+        })
+
+        table.render({
+            elem: '#main-table',
+            page: false,
+            cols: [[
+                {field: "name", title: "对象名称", width: 100},
+                {field: "schedule", title: "计划内容", width: 100},
+                {field: "date", title: "日期", width: 100},
+            ]],
+        })
+    })
+</script>

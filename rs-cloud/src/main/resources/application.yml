@@ -1,0 +1,156 @@
+server:
+  port: 8001
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        name: IOTSESSIONID
+spring:
+  # 多环境配置
+  profiles:
+    active: dev
+  # 连接池配置
+  datasource:
+    initialization-mode: embedded
+    hikari:
+      # 最小空闲连接数
+      minimum-idle: 10
+      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      auto-commit: true
+      # 空闲连接存活最大时间，默认600000（10分钟）
+      idle-timeout: 10000
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 100
+      # 连接池名称
+      pool-name: IotHikariCP
+      # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      max-lifetime: 1800000
+      # 数据库连接超时时间,默认30秒，即30000
+      connection-timeout: 300000
+      connection-test-query: SELECT 1
+  # json时间格式设置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  # 提交表单_method起作用
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  # 设置上传文件大小
+  servlet:
+    multipart:
+      # 指定上载文件允许的最大大小。默认值为1MB
+      max-file-size: 100MB
+      # 指定multipart/form-data请求允许的最大大小。默认值为10MB
+      max-request-size: 100MB
+  main:
+    allow-bean-definition-overriding: true
+  thymeleaf:
+      prefix: classpath:/static/
+      suffix: .html
+      mode: html
+      cache: false
+  # redis 配置
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 0
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+#    password: pgcn`123
+    # 链接超时时间 单位 ms（毫秒）
+    timeout: 5000
+    ## Redis 线程池设置 ##
+    lettuce:
+      pool:
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 8
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 1
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1
+
+  # 邮件服务器配置
+  mail:
+    default-encoding: UTF-8
+    host: smtp.qq.com
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+
+# Mybatis-plus配置
+mybatis-plus:
+  configuration:
+    cache-enabled: false
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  typeAliasesPackage: cn.ruishan.*.entity
+
+forest:
+  max-connections: 1000        # 连接池最大连接数
+  connect-timeout: 3000        # 连接超时时间，单位为毫秒
+  read-timeout: 3000           # 数据读取超时时间，单位为毫秒
+  interceptors: cn.ruishan.common.interceptor.HttpInterceptor
+  error-count: 3
+
+# JWT配置
+jwt:
+  # 密匙Key
+  secret: 4akNBMwcmgWV+pGrC5DpJDJxytyaygJZJ9CXPnLZ2dk=
+  # HeaderKey
+  tokenHeader: Authorization
+  # ParamKey
+  tokenParam: access_token
+  # Token前缀
+  tokenPrefix: Bearer
+  # 过期时间，单位秒(1天)
+  expiration: 86400
+  # 刷新时间，单位天
+  refreshTime: 7
+  # 配置白名单（不需要认证）
+  antMatchers:
+    # 静态资源文件
+    - /favicon.ico
+    - /**.html
+    - /components/**
+    - /assets/**
+    # 首页及登陆页
+    - /
+    # 微信小程序
+    - /api/getUserInfo
+    - /api/encrypt
+    - /api/saveData
+    - /api/getData
+    # swagger ui
+    # - /v2/api-docs
+    # - /swagger-resources
+    # - /swagger-resources/**
+    # - /configuration/ui
+    # - /configuration/security
+    # - /doc.html
+    # - /webjars/**
+    # 文件下载
+    - /devops/**/downloadFile**
+    - /devops/dev/getQrCode
+    # 图形
+    - /wasm/**
+    # 百度瓦片地图
+    - /bmap/**
+    # wasm
+    - /gsWasm/**
+
+logging:
+  # logback多环境
+  config: classpath:logback-${spring.profiles.active}.xml

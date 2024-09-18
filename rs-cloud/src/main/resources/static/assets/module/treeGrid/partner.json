@@ -1,0 +1,10 @@
+{
+  "msg": "",
+  "code": 200,
+  "count": 3,
+  "data": [
+    {"id": 1, "name": "科华", "type": 0, "contact": "XXX", "phone": "131xxxxxxxx"},
+    {"id": 2, "name": "英博", "type": 0, "contact": "XXX", "phone": "132xxxxxxxx"},
+    {"id": 3, "name": "昆兰", "type": 1, "contact": "XXX", "phone": "131xxxxxxxx"}
+  ]
+}

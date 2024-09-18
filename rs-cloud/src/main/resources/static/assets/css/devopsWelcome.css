@@ -1,0 +1,233 @@
+html {
+    /*height: 100%;*/
+    background-color:  #09132e;
+}
+
+body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-image: linear-gradient(to bottom, #102340 , #09132e);
+}
+/* 去除地图左下角logo */
+.anchorBL{
+    display:none;
+}
+.BMap_bubble_pop{
+    background-color: #fff0 !important;
+    border: 1px solid rgba(255, 255, 255, 0) !important;
+}
+.BMap_bubble_top{
+    display: none;
+}
+.BMap_bubble_pop img{
+    display: none;
+}
+/* 消息内容 */
+.BMap_bubble_content {
+    background-color:#509ebd;
+    padding:10px 15px;
+    border-radius: 5px;
+    width: auto !important;
+    height: auto !important;
+}
+/* 内容 */
+.BMap_pop div:nth-child(9) {
+    top:5px !important;
+    border-radius:7px;
+}
+/* 左上角删除按键 */
+.BMap_pop img {
+    display: none;
+}
+.BMap_top {
+    display:none;
+}
+.BMap_bottom {
+    display:none;
+}
+.BMap_center {
+    display:none;
+}
+/* 隐藏边角 */
+.BMap_pop div:nth-child(1) div {
+    display:none;
+}
+.BMap_pop div:nth-child(3) {
+    display:none;
+}
+.BMap_pop div:nth-child(5) {
+    display:none;
+}
+.BMap_pop div:nth-child(7) {
+    display:none;
+}
+.shadow {
+    display: none !important;
+}
+.fontTrans{
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-image:-webkit-linear-gradient(bottom,rgb(118,199,254),white);
+}
+.fontHead{
+    background:url(../images/projHead.png) no-repeat top center;
+    height:130px;
+    font-size: 58px;
+    color: #F9F9F9;
+    text-align: center;
+    font-family: 幼圆;
+    letter-spacing:12px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+.left_font{
+    background:url(../images/left1.png) no-repeat left center;
+    background-size: 80px;
+    height: 100px;
+}
+.left_div_head_font{
+    color: white;
+    font-size: 22px;
+    padding-left: 45px;
+    padding-top: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.leftDiv1{
+    background: url(../images/proj1.png) no-repeat;
+    height: 420px;
+    margin-left: 7%;
+}
+.leftDiv2{
+    background: url(../images/proj2.png) no-repeat;
+    height: 280px;
+    margin-left: 7%;
+    margin-top: 25px;
+}
+.leftImg1{
+    background:url(../images/left1.png) no-repeat left center;
+    background-size: 70px;
+    height: 90px;
+    margin-top: 40px;
+    margin-right: 50px;
+    margin-left: 25px;
+}
+.leftImg2{
+    background:url(../images/left2.png) no-repeat left center;
+    background-size: 70px;
+    height: 90px;
+    margin-top: 20px;
+    margin-right: 50px;
+    margin-left: 25px;
+}
+.leftImg3{
+    background:url(../images/left3.png) no-repeat left center;
+    background-size: 70px;
+    height: 90px;
+    margin-top: 20px;
+    margin-right: 50px;
+    margin-left: 25px;
+}
+.left_div_font1{
+    color: #deeeff;
+    padding-left: 90px;
+    height: 35px;
+    font-size: 24px;
+}
+.left_div_font2{
+    float:right;
+    color: #f2e38c;
+    font-size: 22px;
+    margin-right: 10px;
+    line-height: 40px;
+}
+.left_div_font3{
+    float:right;
+    margin-right:30px;
+    font-size: 36px;
+    color: #6cc4ff;
+}
+.leftImg4 {
+    display: inline-block;
+    width: 130px;
+    height: 120px;
+    margin-left: 10px;
+    background: url(../images/left4.png) center no-repeat;
+    background-size: 110px;
+    text-align: center;
+}
+.leftImg5 {
+    display: inline-block;
+    width: 130px;
+    height: 120px;
+    margin-left: 5px;
+    background: url(../images/left5.png) center no-repeat;
+    background-size: 110px;
+    text-align: center;
+}
+.leftImg6 {
+    display: inline-block;
+    width: 130px;
+    height: 120px;
+    background: url(../images/left6.png) center no-repeat;
+    background-size: 110px;
+    text-align: center;
+}
+.rightDiv1{
+    background: url(../images/proj3.png) no-repeat;
+    height: 380px;
+}
+.rightDiv2{
+    background: url(../images/proj4.png) no-repeat;
+    height: 320px;
+    margin-top: 25px;
+}
+.right_div_font1{
+    color: #deeeff;
+    padding-left: 20px;
+    height: 35px;
+    font-size: 22px;
+}
+.right_div_font2{
+    font-size: 36px;
+    padding-left: 20px;
+    color: #6cc4ff;
+    margin-right: 10px;
+    letter-spacing: 1px;
+}
+.right_div_font3{
+    float:right;
+    color: #f2e38c;
+    font-size: 22px;
+    margin-right: 10px;
+    line-height: 60px;
+}
+.rightInfDiv{
+    background-color: #1b2a4f;
+    height: 60px;
+    line-height: 60px;
+    margin-top: 35px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.right_div_img{
+    background: url(../images/right1.png) no-repeat left center;
+    background-size: 60px;
+    height: 80px;
+    margin-top: 25px;
+    margin-left: 30px;
+}
+.tc-fs18{
+    text-align: center;
+    font-size: 18px;
+    color: #deeeff;
+}
+.fs28-mt30{
+    font-size: 28px;
+    margin-top: 30px;
+}
+.red-fs20{
+    color: #ef6f59;
+    font-size: 20px;
+}

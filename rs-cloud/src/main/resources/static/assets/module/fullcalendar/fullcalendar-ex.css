@@ -1,0 +1,136 @@
+#calendar {
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.fc .fc-toolbar-title {
+    color: #fff;
+}
+
+.fc .fc-editEvent-button {
+    background: #47d;
+    border: 1px solid #47d;
+}
+
+.fc .fc-editEvent-button:hover {
+    background: #5A87E1;
+    border: 1px solid #5A87E1;
+}
+
+.fc .fc-saveEvent-button {
+    background: #642DD7;
+    border: 1px solid #642DD7;
+}
+
+.fc .fc-saveEvent-button:hover {
+    background: #7442DB;
+    border: 1px solid #7442DB;
+}
+
+.fc .fc-closeEdit-button {
+    background: #646464;
+    border: 1px solid #646464;
+}
+
+.fc .fc-closeEdit-button:hover {
+    background: #717171;
+    border: 1px solid #717171;
+}
+
+.fc .fc-btn-disabled {
+    background-color: #FBFBFB !important;
+    border-color: #e6e6e6 !important;
+    color: #C9C9C9 !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+
+.fc .fc-col-header-cell-cushion, .fc .fc-daygrid-day-number {
+    color: #fff;
+}
+
+.fc .fc-timegrid-axis-cushion, .fc .fc-timegrid-slot-label-cushion {
+    color: #fff;
+}
+
+.fc-col-header {
+    border: 1px solid #47d;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border: 1px solid #47d;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border: 1px solid #47d;
+}
+
+.fc .fc-daygrid-day.fc-day-today, .fc .fc-timegrid-col.fc-day-today {
+    background: rgba(68, 119, 221, .5);
+}
+
+.fc-theme-standard .fc-list {
+    border: 1px solid #47d;
+}
+
+.fc-theme-standard .fc-list-day-cushion {
+    background: #238;
+}
+
+.fc-direction-ltr .fc-list-day-text, .fc-direction-rtl .fc-list-day-side-text {
+    color: #fff;
+}
+
+.fc-list-event:hover td {
+    background: #238 !important;
+}
+
+.fc-list-event .fc-list-event-time, .fc-list-event .fc-list-event-title {
+    color: #fff;
+}
+
+.fc .fc-list-event-dot {
+    margin-top: 8px;
+}
+
+.fc-direction-ltr .fc-list-day-side-text, .fc-direction-rtl .fc-list-day-text {
+    color: #fff;
+}
+
+.fc-h-event {
+    border: 1px solid rgba(55, 136, 216, .5);
+    background: rgba(55, 136, 216, .5);
+}
+
+.fc-event-main .users {
+    overflow: hidden; /*对超出容器的部分强制截取，高度不确定则换行*/
+    text-overflow: ellipsis; /*显示省略符号来代表被修剪的文本。*/
+    white-space: nowrap; /*禁止换行*/
+}
+
+.tippy-box[data-theme~='yellow'] {
+    background-color: #FFC107;
+    color: black;
+    border-radius: 3px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    padding: 5px;
+    text-align: left;
+    z-index: 99999;
+    white-space:nowrap;
+}
+
+.tippy-box[data-theme~='yellow'][data-placement^=top]>.tippy-arrow:before {
+    border-top-color: #FFC107;
+}
+
+.tippy-box[data-theme~='yellow'][data-placement^=right]>.tippy-arrow:before {
+    border-right-color: #FFC107;
+}
+
+.tippy-box[data-theme~='yellow'][data-placement^=bottom]>.tippy-arrow:before {
+    border-bottom-color: #FFC107;
+}
+
+.tippy-box[data-theme~='yellow'][data-placement^=left]>.tippy-arrow:before {
+    border-left-color: #FFC107;
+}
